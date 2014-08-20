@@ -28,44 +28,39 @@ Import the widget to your project and add either Radiobutton List or Radiobutton
 
 ##### General
 
-Display        |                                                                            |
---------------------------------------------------------------------------------------------
-*Direction*    | Determines if the radiobutton list will render horizontally or vertically
+###### Display
+
+* *Direction* - Determines if the radiobutton list will render horizontally or vertically
 
 
-Events         |                                                                            |
---------------------------------------------------------------------------------------------
-*On change*    | The microflow which will be invoked in case of a on change event.
+###### Events
+
+* *On change* - The microflow which will be invoked in case of a on change event.
 
 
 ##### Radiobutton list (based on an attribute)
 
-Display        |                                                                            |
---------------------------------------------------------------------------------------------
-*True label*   | Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'True'
-*False label*  |  Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'False'
+###### Display                                                                            |
+
+* *True label* - Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'True'
+* *False label* - Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'False'
 
 
-Target source |                                                                            |
---------------------------------------------------------------------------------------------
-*Attribute*    | Attribute of type enumeration or boolean of which the values will be rendered as a radiobutton list.
+###### Target source
+
+* *Attribute* - Attribute of type enumeration or boolean of which the values will be rendered as a radiobutton list.
  
 
 ##### Radiobutton list Advanced (based on an association)
 
-Data source |                                                                            |
---------------------------------------------------------------------------------------------
-*Entity to list* | Entity containing the attribute which should be rendered as a radiobutton list
+###### Data source 
 
-*XPath constraint* | Constrain the list of objects to be retrieved
-
-*Label* | (String) Attribute of which it's contents will be used as label
-
-*Target reference* | Association where the reference will be saved.
-
-*Sort attribute* | Attribute of which the value will determine the sort order
-
-*Sort order* | Determines if values of the sort attribute will be sorted ascending or descending
+* *Entity to list* - Entity containing the attribute which should be rendered as a radiobutton list
+* *XPath constraint* - Constrain the list of objects to be retrieved
+* *Label* - (String) Attribute of which it's contents will be used as label
+* *Target reference* - Association where the reference will be saved.
+* *Sort attribute* - Attribute of which the value will determine the sort order
+* *Sort order* - Determines if values of the sort attribute will be sorted ascending or descending
 
 ###Example
 
