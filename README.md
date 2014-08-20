@@ -2,9 +2,12 @@
 
 Radio button based input widget for enumeration values, boolean values and references. Useful replacement for the default drop-down or reference selector widget.
 
-##Description
+## Description
 
 This widget enables you to render your attribute or association as a radiobutton list.
+
+## Contributing
+For more information on contributing to this repository visit [Contributing to a GitHub repository] (https://world.mendix.com/display/howto50/Contributing+to+a+GitHub+repository)
 
 ## Typical usage scenario
 
