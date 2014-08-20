@@ -28,29 +28,32 @@ Import the widget to your project and add either Radiobutton List or Radiobutton
 
 ##### General
 
-Display        |
+Display        |                                                                            |
 --------------------------------------------------------------------------------------------
 *Direction*    | Determines if the radiobutton list will render horizontally or vertically
 
-Events         |
+
+Events         |                                                                            |
 --------------------------------------------------------------------------------------------
 *On change*    | The microflow which will be invoked in case of a on change event.
 
+
 ##### Radiobutton list (based on an attribute)
 
-Display        |
+Display        |                                                                            |
 --------------------------------------------------------------------------------------------
 *True label*   | Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'True'
 *False label*  |  Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'False'
 
-Target source |
+
+Target source |                                                                            |
 --------------------------------------------------------------------------------------------
 *Attribute*    | Attribute of type enumeration or boolean of which the values will be rendered as a radiobutton list.
  
 
 ##### Radiobutton list Advanced (based on an association)
 
-Data source |
+Data source |                                                                            |
 --------------------------------------------------------------------------------------------
 *Entity to list* | Entity containing the attribute which should be rendered as a radiobutton list
 
