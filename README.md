@@ -6,50 +6,60 @@ Radio button based input widget for enumeration values, boolean values and refer
 
 This widget enables you to render your attribute or association as a radiobutton list.
 
-##Typical usage scenario
+## Typical usage scenario
 
 Visualize all possible options in your user interface, instead of forcing your user to open a dropdownlist to view all available options.
 
-##Features and limitations
+## Features and limitations
  
 - Displaying the list in a horizontal or vertical direction.
 - Specify text of the labels in case of a boolean attribute
 - Attaching a microflow on the onchange event.
 
-##Installation
+## Installation
 
 Import the widget to your project and add either Radiobutton List or Radiobutton List Advance to a dataview on a page. Configure the properties to determine how the widget will behave in your application.
 
 ###Properties
 
 
-### General
+##### General
 
-_Display_
-*Direction* - Determines if the radiobutton list will render horizontally or vertically
+Display        |
+--------------------------------------------------------------------------------------------
+*Direction*    | Determines if the radiobutton list will render horizontally or vertically
 
-_Events_ 
-*On change* - The microflow which will be invoked in case of a on change event.
+Events         |
+--------------------------------------------------------------------------------------------
+*On change*    | The microflow which will be invoked in case of a on change event.
 
-####Radiobutton list (based on an attribute)
+##### Radiobutton list (based on an attribute)
 
-_Display_
-*True label* - Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'True'
-*False label* - Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'False'
+Display        |
+--------------------------------------------------------------------------------------------
+*True label*   | Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'True'
+*False label*  |  Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'False'
 
-_Target source_ 
-*Attribute* - Attribute of type enumeration or boolean of which the values will be rendered as a radiobutton list.
+Target source |
+--------------------------------------------------------------------------------------------
+*Attribute*    | Attribute of type enumeration or boolean of which the values will be rendered as a radiobutton list.
  
 
-####Radiobutton list Advanced (based on an association)
+##### Radiobutton list Advanced (based on an association)
 
-_Data source_
-*Entity to list* - Entity containing the attribute which should be rendered as a radiobutton list
-*XPath constraint* - Constrain the list of objects to be retrieved
-*Label* - (String) Attribute of which it's contents will be used as label
-*Target reference* - Association where the reference will be saved.
-*Sort attribute* - Attribute of which the value will determine the sort order
-*Sort order* - Determines if values of the sort attribute will be sorted ascending or descending
+Data source |
+--------------------------------------------------------------------------------------------
+*Entity to list* | Entity containing the attribute which should be rendered as a radiobutton list
+
+*XPath constraint* | Constrain the list of objects to be retrieved
+
+*Label* | (String) Attribute of which it's contents will be used as label
+
+*Target reference* | Association where the reference will be saved.
+
+*Sort attribute* | Attribute of which the value will determine the sort order
+
+*Sort order* | Determines if values of the sort attribute will be sorted ascending or descending
 
 ###Example
 
