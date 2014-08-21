@@ -40,7 +40,7 @@ Import the widget to your project and add either Radiobutton List or Radiobutton
 
 ##### Radiobutton list (based on an attribute)
 
-###### Display                                                                            |
+###### Display
 
 * *True label* - Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'True'
 * *False label* - Label which will be shown in case your 'Target source attribute' is a boolean type and attribute value is 'False'
