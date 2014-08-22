@@ -3,9 +3,9 @@
 	========================
 
 	@file      : RadioButtonList.js
-	@version   : 2.1
-	@author    : Roeland Salij
-	@date      : 27-5-2010
+	@version   : 3.0
+	@author    : Roeland Salij, Andries Smit
+	@date      : 22-08-2014
 	@copyright : Mendix
 	@license   : Please contact our sales department.
 
@@ -22,11 +22,10 @@ dojo.provide("RadioButtonList.widget.AssocRadioButtonList");
 
 mxui.dom.addCss(require.toUrl("RadioButtonList/widget/ui/RadioButtonList.css"));
 
-
 mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 	//DECLARATION
-	mixins       : [dijit._TemplatedMixin, mendix.addon._Contextable],
-	templateString : '<div class="RadioButtonList"><ul dojoAttachPoint="listNode"></ul><div style="float:none;clear:both"></div></div>',
+	mixins       : [dijit._TemplatedMixin, mendix.addon._Contextable, mxui.mixin._ValidationHelper],
+	templateString : '<div class="RadioButtonList"></div>',
 	inputargs: { 
 		RadioListObject : '',
 		Constraint : '',
@@ -66,7 +65,8 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 	},
 	
 	initRadioButtonList : function(mxObjArr){
-		dojo.empty(this.listNode);
+		dojo.empty(this.domNode);
+                var $ = mxui.dom.create;
 		var mxObj;
 		
 		var currentSelectedValue;
@@ -79,16 +79,15 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			mxObj = mxObjArr[i];
 			
 			var radioid = this.RadioListObject+'_'+this.id+'_'+i;
-								
-			var labelNode = mxui.dom.label();
-			dojo.attr(labelNode,'for', radioid);
+			
+			var labelNode = $("label");
+                        //dojo.attr(labelNode,'for', radioid);
 			dojo.attr(labelNode, 'disabled', this.attrDisable);
 			
 			var guid = mxObj.getGuid();
-			var rbNode = mxui.dom.input({
+			var rbNode = $("input", {
 				'type' : 'radio',
 				'value' : guid ,
-			//	'name' : "radio"+this.mendixobject.getGuid()+'_'+this.id,
 				'id' : radioid
 			});
 
@@ -97,32 +96,29 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			//which is a result of the fact that document.createElement("<tagname baldibla='basdf'>") is not allowed anymore
 			dojo.attr(rbNode, 'name', "radio"+this.mendixobject.getGuid()+'_'+this.id);
 
-			this.keyNodeArray[guid] = rbNode;
-			
+			this.keyNodeArray[guid] = rbNode;			
 			dojo.attr(rbNode, 'disabled', this.attrDisable);
 			
-			if (currentSelectedValue == mxObj.getGuid()) {
+			if (currentSelectedValue === mxObj.getGuid()) {
 				dojo.attr(rbNode,'defaultChecked', true);
 			}
 			
-			var textDiv = mxui.dom.span(mxObj.getAttribute(this.RadioListItemAttribute));
-			dojo.style(textDiv, { cursor : 'default' });
+			var textDiv = $("span", mxObj.get(this.RadioListItemAttribute));
 			
 			labelNode.appendChild(rbNode);
 			labelNode.appendChild(textDiv);
 			
-			this.connect(rbNode, "onclick", dojo.hitch(this, this.onclickRadio, mxObj.getGuid(), rbNode));
-			this.connect(textDiv, "onclick", dojo.hitch(this, this.onclickRadio, mxObj.getGuid(), rbNode));
+			this.connect(rbNode, "onclick", dojo.hitch(this, this.onclickRadio, mxObj.getGuid(), rbNode));			
 			
-			var listItemNode = mxui.dom.li(labelNode);
-			
-			if(this.direction == 'horizontal') {
-				dojo.addClass(listItemNode, 'horizontal');
-			}
-			
-			this.listNode.appendChild(listItemNode);
-		}
-			
+                        if(this.direction === "horizontal" ){
+                            dojo.addClass(labelNode, "radio-inline");
+                            this.domNode.appendChild(labelNode);
+                        } else {
+                            var radiodiv = $("div", {"class" : "radio"});
+                            radiodiv.appendChild(labelNode);
+                            this.domNode.appendChild(radiodiv);
+                        }			
+		}			
 	},
 	
 	onclickRadio : function( radioKey, rbNode) {
@@ -135,11 +131,13 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			
 		this.onChange();
 		this.triggerMicroflow();
-	},		
+	},
+		
 	
 	_getValueAttr : function () {
 		return this.selectedValue;
-	},		
+	},
+		
 			
 	_setValueAttr : function (value) {
 		
@@ -166,14 +164,16 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 		
 		if (this.onchangeAction)
 		{
-			mx.processor.xasAction({
-				error       : function() {
-					logger.error("RadioButtonList.widget.AssocRadioButtonList.triggerMicroFlow: XAS error executing microflow");
-				},
-				actionname  : this.onchangeAction,
-				applyto     : 'selection',
-				guids       : [this.mendixobject.getGuid()]
-			});
+                    mx.data.action({
+                        params          : {
+                            applyto     : "selection",
+                            actionname  : this.onchangeAction,
+                            guids       : [this.mendixobject.getGuid()]
+                        },
+                        error           : function(error) {
+                            logger.error("RadioButtonList.widget.AssocRadioButtonList.triggerMicroFlow: XAS error executing microflow; " + error.description);
+                        }
+                    });
 		}
 	},
 
@@ -184,9 +184,15 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 	
 	//summary : stub function, will be used or replaced by the client environment
 	onChange : function(){
+            this.removeError();
 	},
 
 	postCreate : function(){
+                // intantiate empty objects, arrays to prefent sharing along widgets
+                this.mendixobject = null;
+                this.selectedValue = null;
+                this.handles = null;
+        
 		logger.debug(this.id + ".postCreate");
 		this.keyNodeArray = {};
 		this.assocName = this.name.split("/")[0];
@@ -202,6 +208,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 	},
 	
 	update : function(obj, callback){
+                this.removeError();
 		logger.debug(this.id + ".update");
 		if(this.handles){
 			dojo.forEach(this.handles, function (handle, i) {
@@ -216,18 +223,16 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			    guid     : obj.getGuid(),
 			    val      : true,
 			    callback : function(validations) {
-			    	if(self.readonly){
-			    		validations[0].removeAttribute(self.name);
-			    	} else {
-				    	var reason = validations[0].getReasonByAttribute(self.name);
-						if(dojo.query('.alert', this.domNode).length > 0) {
-							dojo.destroy(dojo.query('.alert', this.domNode)[0]);
-						}
-				        var div = dojo.create('div', {'class' : 'alert alert-danger'});
-				        mxui.dom.textContent(div, reason);
-				        dojo.place(div, self.domNode, 'last');
-				        validations[0].removeAttribute(self.name);
-			    	}
+                                var val = validations[0],
+                                    msg = val.getReasonByAttribute(self.name);                            
+                                if(self.readonly){
+			    		val.removeAttribute(self.name);
+			    	} else {                                
+                                    if (msg) {
+                                        self.addError(msg);
+                                        val.removeAttribute(self.name);
+                                    }
+                                }
 			    }
 			});
 
@@ -237,11 +242,18 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			    	self.update(obj, callback);
 			    }
 			});
-
-			this.handles = [validationhandle, refreshhandle];
+                        
+                        var refreshAttHandle = mx.data.subscribe({
+			    guid    : obj.getGuid(),
+                            attr    : this.name,
+			    callback : function(guid) {
+			    	self.update(obj, callback);
+			    }
+			});
+                        
+                        this.handles = [validationhandle, refreshhandle, refreshAttHandle];
 			
 			this.getListObjects(this.mendixobject);
-
 		}
 			
 		callback && callback();
@@ -249,7 +261,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 	
 	uninitialize : function(){
 		logger.debug(this.id + ".uninitialize");
-		if(this.handles){
+                if(this.handles){
 			dojo.forEach(this.handles, function (handle, i) {
 				mx.data.unsubscribe(handle);
 			});
