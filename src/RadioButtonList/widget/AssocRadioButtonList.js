@@ -3,7 +3,7 @@
 	========================
 
 	@file      : RadioButtonList.js
-	@version   : 2.0
+	@version   : 2.1
 	@author    : Roeland Salij
 	@date      : 27-5-2010
 	@copyright : Mendix
@@ -20,12 +20,12 @@
 
 dojo.provide("RadioButtonList.widget.AssocRadioButtonList");
 
-mendix.dom.insertCss(mx.moduleUrl('RadioButtonList') + 'widget/ui/RadioButtonList.css');
+mxui.dom.addCss(require.toUrl("RadioButtonList/widget/ui/RadioButtonList.css"));
 
 
-mendix.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
+mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 	//DECLARATION
-	addons       : [dijit._Templated, mendix.addon._Contextable],
+	mixins       : [dijit._TemplatedMixin, mendix.addon._Contextable],
 	templateString : '<div class="RadioButtonList"><ul dojoAttachPoint="listNode"></ul><div style="float:none;clear:both"></div></div>',
 	inputargs: { 
 		RadioListObject : '',
@@ -54,17 +54,15 @@ mendix.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 		else
 			xpathString = "//" + this.RadioListObject + this.Constraint;
 
-		var options = {
+		mx.data.get({
+                    xpath    : xpathString,
+                    filter   :  {
 			limit   : 50,
 			depth	: 0,
 			sort    : [[this.sortAttr, this.sortOrder]]
-		};
-		
-		mx.processor.getObjectsByXPath(
-			xpathString,
-			options,
-			dojo.hitch(this, this.initRadioButtonList)
-		);
+                    },
+                    callback : dojo.hitch(this, this.initRadioButtonList)
+                });
 	},
 	
 	initRadioButtonList : function(mxObjArr){
@@ -82,41 +80,41 @@ mendix.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			
 			var radioid = this.RadioListObject+'_'+this.id+'_'+i;
 								
-			var labelNode = mendix.dom.label();
+			var labelNode = mxui.dom.label();
 			dojo.attr(labelNode,'for', radioid);
 			dojo.attr(labelNode, 'disabled', this.attrDisable);
 			
-			var guid = mxObj.getGUID();
-			var rbNode = mendix.dom.input({
+			var guid = mxObj.getGuid();
+			var rbNode = mxui.dom.input({
 				'type' : 'radio',
 				'value' : guid ,
-			//	'name' : "radio"+this.mendixobject.getGUID()+'_'+this.id,
+			//	'name' : "radio"+this.mendixobject.getGuid()+'_'+this.id,
 				'id' : radioid
 			});
 
 			//MWE: name is set here, because otherwise it will result in a
 			//"INVALID_CHARACTER_ERR (5)" exception,
 			//which is a result of the fact that document.createElement("<tagname baldibla='basdf'>") is not allowed anymore
-			dojo.attr(rbNode, 'name', "radio"+this.mendixobject.getGUID()+'_'+this.id);
+			dojo.attr(rbNode, 'name', "radio"+this.mendixobject.getGuid()+'_'+this.id);
 
 			this.keyNodeArray[guid] = rbNode;
 			
 			dojo.attr(rbNode, 'disabled', this.attrDisable);
 			
-			if (currentSelectedValue == mxObj.getGUID()) {
+			if (currentSelectedValue == mxObj.getGuid()) {
 				dojo.attr(rbNode,'defaultChecked', true);
 			}
 			
-			var textDiv = mendix.dom.span(mxObj.getAttribute(this.RadioListItemAttribute));
+			var textDiv = mxui.dom.span(mxObj.getAttribute(this.RadioListItemAttribute));
 			dojo.style(textDiv, { cursor : 'default' });
 			
 			labelNode.appendChild(rbNode);
 			labelNode.appendChild(textDiv);
 			
-			this.connect(rbNode, "onclick", dojo.hitch(this, this.onclickRadio, mxObj.getGUID(), rbNode));
-			this.connect(textDiv, "onclick", dojo.hitch(this, this.onclickRadio, mxObj.getGUID(), rbNode));
+			this.connect(rbNode, "onclick", dojo.hitch(this, this.onclickRadio, mxObj.getGuid(), rbNode));
+			this.connect(textDiv, "onclick", dojo.hitch(this, this.onclickRadio, mxObj.getGuid(), rbNode));
 			
-			var listItemNode = mendix.dom.li(labelNode);
+			var listItemNode = mxui.dom.li(labelNode);
 			
 			if(this.direction == 'horizontal') {
 				dojo.addClass(listItemNode, 'horizontal');
@@ -137,13 +135,11 @@ mendix.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			
 		this.onChange();
 		this.triggerMicroflow();
-	},
-		
+	},		
 	
 	_getValueAttr : function () {
 		return this.selectedValue;
-	},
-		
+	},		
 			
 	_setValueAttr : function (value) {
 		
@@ -176,7 +172,7 @@ mendix.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 				},
 				actionname  : this.onchangeAction,
 				applyto     : 'selection',
-				guids       : [this.mendixobject.getGUID()]
+				guids       : [this.mendixobject.getGuid()]
 			});
 		}
 	},
@@ -202,7 +198,7 @@ mendix.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			this.attrDisable = true;
 	
 		this.initContext();
-		this.actRendered();
+		this.actLoaded();
 	},
 	
 	update : function(obj, callback){
@@ -258,6 +254,5 @@ mendix.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 				mx.data.unsubscribe(handle);
 			});
 		}
-
 	}
 });

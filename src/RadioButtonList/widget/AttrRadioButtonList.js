@@ -3,7 +3,7 @@
 	========================
 
 	@file      : RadioButtonList.js
-	@version   : 2.0 
+	@version   : 2.1 
 	@author    : Roeland Salij
 	@date      : 27-5-2010
 	@copyright : Mendix
@@ -19,11 +19,11 @@
 */
 dojo.provide("RadioButtonList.widget.AttrRadioButtonList");
 
-mendix.dom.insertCss(mx.moduleUrl('RadioButtonList') + 'widget/ui/RadioButtonList.css');
+mxui.dom.addCss(require.toUrl("RadioButtonList/widget/ui/RadioButtonList.css"));
 
-mendix.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
+mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 	//DECLARATION
-	addons       : [dijit._Templated, mendix.addon._Contextable],
+	mixins       : [dijit._TemplatedMixin, mendix.addon._Contextable],
 	templateString : '<div class="RadioButtonList"><div style="float:none;clear:both"></div></div>',
 	inputargs: {
 		name : '',
@@ -39,31 +39,29 @@ mendix.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 	attrDisable :false,
 	selectedValue : '',
 	keyNodeArray : null,
-	handles : null,
-	
+	handles : null,	
 	
 	initRadioButtonList : function(enumObj){
 		var i = 0;
 		dojo.empty(this.domNode);
-		var attrName = "" + this.mendixobject.getAttribute(this.name);
+		var attrName = "" + this.mendixobject.get(this.name);
 		for (var key in enumObj) {
 			var radioid = this.name+'_'+this.id+'_'+i;
 			var radiodiv = this.direction == 'horizontal' ? dojo.create('div', {'class' : 'radio-inline'}) : dojo.create('div', {'class' : 'radio'});
-			var rbNode = mendix.dom.input({
+			var rbNode = mxui.dom.input({
 				'type' : 'radio',
 				'value' : key,
-				//'name' : "radio"+this.mendixobject.getGUID()+'_'+this.id,
+				//'name' : "radio"+this.mendixobject.getGuid()+'_'+this.id,
 				'id' : radioid
 			});
 			//MWE: name is set here, because otherwise it will result in a
 			//"INVALID_CHARACTER_ERR (5)" exception,
 			//which is a result of the fact that document.createElement("<tagname baldibla='basdf'>") is not allowed anymore
-			dojo.attr(rbNode, 'name',  "radio"+this.mendixobject.getGUID()+'_'+this.id);
-			
+			dojo.attr(rbNode, 'name',  "radio"+this.mendixobject.getGuid()+'_'+this.id);			
 			
 			this.keyNodeArray[key] = rbNode;
 			
-			var labelNode = mendix.dom.label();
+			var labelNode = mxui.dom.label();
 			dojo.attr(labelNode,'for', radioid);
 			dojo.attr(labelNode, 'disabled', this.attrDisable);
 			
@@ -74,12 +72,12 @@ mendix.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 				this.selectedValue = key;
 			}
 
-			var textDiv = mendix.dom.span(enumObj[key]);
+			var textDiv = mxui.dom.span(enumObj[key]);
 			dojo.style(textDiv, { cursor : 'default' });
 			this.connect(rbNode, "onclick", dojo.hitch(this, this.onChangeRadio, rbNode, key));
 			this.connect(textDiv, "onclick", dojo.hitch(this, this.onChangeRadio, rbNode, key));
 			
-			var listItemNode = mendix.dom.li(textDiv);
+			var listItemNode = mxui.dom.li(textDiv);
 			
 			labelNode.appendChild(rbNode);
 			labelNode.appendChild(textDiv);
@@ -114,7 +112,7 @@ mendix.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 				},
 				actionname  : this.onchangeAction,
 				applyto     : 'selection',
-				guids       : [this.mendixobject.getGUID()]
+				guids       : [this.mendixobject.getGuid()]
 			});
 		}
 	},
@@ -158,6 +156,7 @@ mendix.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 	//summary : stub function, will be used or replaced by the client environment
 	onChange : function(){
 	},
+        
 	postCreate : function(){
 		logger.debug(this.id + ".postCreate");
   
@@ -166,7 +165,7 @@ mendix.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 			this.attrDisable = true;
 	
 		this.initContext();
-		this.actRendered();
+		this.actLoaded();
 	},
  
 	update : function(obj, callback) {
@@ -188,9 +187,9 @@ mendix.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 				if (this.name != '') {
 					var enumerationObj;
 					//get enumeration for current attribute
-					if(obj.getAttributeClass(this.name) == 'Enum')
+					if(obj.getAttributeType(this.name) == 'Enum')
 						enumerationObj = obj.getEnumKVPairs(this.name);
-					else if(obj.getAttributeClass(this.name) == 'Boolean')
+					else if(obj.getAttributeType(this.name) == 'Boolean')
 					{
 						enumerationObj = {};
 						enumerationObj['true'] = this.captiontrue;
