@@ -62,8 +62,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 			dojo.attr(rbNode, 'name',  "radio"+this.mendixobject.getGuid()+'_'+this.id);			
 			
 			this.keyNodeArray[key] = rbNode;			
-			var labelNode = $('label');
-			dojo.attr(labelNode, 'disabled', this.attrDisable);	
+			dojo.attr(rbNode, 'disabled', this.attrDisable);	
 
 			if (attrName == key) {
 				dojo.attr(rbNode,'defaultChecked', true);
