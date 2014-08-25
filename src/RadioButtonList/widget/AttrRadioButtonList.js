@@ -50,6 +50,9 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 		for (var key in enumObj) {
 			var radioid = this.name+'_'+this.id+'_'+i;
 			
+			var labelNode = $("label");
+			dojo.attr(labelNode, 'disabled', this.attrDisable);
+
 			var rbNode = $("input", {
 				'type' : 'radio',
 				'value' : key,
