@@ -1,22 +1,3 @@
-/**
-	Radiobutton List Widget
-	========================
-
-	@file      : RadioButtonList.js
-	@version   : 3.0
-	@author    : Roeland Salij, Andries Smit
-	@date      : 22-08-2014
-	@copyright : Mendix
-	@license   : Please contact our sales department.
-
-	Documentation
-	=============
-	This widget can be used to show a radio button list instead of a dropdown list based on an enumeration attribute of an object.
-	
-	Open Issues
-	===========
-
-*/
 dojo.provide("RadioButtonList.widget.AttrRadioButtonList");
 
 mxui.dom.addCss(require.toUrl("RadioButtonList/widget/ui/RadioButtonList.css"));
@@ -25,14 +6,6 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 	//DECLARATION
 	mixins       : [dijit._TemplatedMixin, mendix.addon._Contextable, mxui.mixin._ValidationHelper],
 	templateString : '<div class="RadioButtonList"></div>',
-	inputargs: {
-		name : '',
-		direction : 'horizontal',
-		captiontrue: 'true',
-		captionfalse: 'false',
-		onchangeAction: '',
-		readonly : false
-	},
 	
 	//IMPLEMENTATION
 	mendixobject : null,
@@ -43,7 +16,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 	
 	
 	initRadioButtonList : function(enumObj){
-                var $ = mxui.dom.create;
+		var $ = mxui.dom.create;
 		var i = 0;
 		dojo.empty(this.domNode);
 		var attrName = "" + this.mendixobject.get(this.entity);
@@ -58,10 +31,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 				'value' : key,
 				'id' : radioid
 			});
-                        
-			//MWE: name is set here, because otherwise it will result in a
-			//"INVALID_CHARACTER_ERR (5)" exception,
-			//which is a result of the fact that document.createElement("<tagname baldibla='basdf'>") is not allowed anymore
+						
 			dojo.attr(rbNode, 'name',  "radio"+this.mendixobject.getGuid()+'_'+this.id);			
 			
 			this.keyNodeArray[key] = rbNode;			
@@ -74,17 +44,18 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 
 			var textDiv = mxui.dom.span(enumObj[key]);
 			this.connect(rbNode, "onclick", dojo.hitch(this, this.onChangeRadio, rbNode, key));			
-                        
+						
 			labelNode.appendChild(rbNode);
 			labelNode.appendChild(textDiv);
-                        if(this.direction === "horizontal"){
-                            dojo.addClass(labelNode, "radio-inline");
-                            this.domNode.appendChild(labelNode);
-                        } else {
-                            var radiodiv = $("div", {"class" : "radio"});
-                            radiodiv.appendChild(labelNode);
-                            this.domNode.appendChild(radiodiv);
-                        }
+
+			if(this.direction === "horizontal"){
+				dojo.addClass(labelNode, "radio-inline");
+				this.domNode.appendChild(labelNode);
+			} else {
+				var radiodiv = $("div", {"class" : "radio"});
+				radiodiv.appendChild(labelNode);
+				this.domNode.appendChild(radiodiv);
+			}
 			
 			i++;
 		}
@@ -97,7 +68,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 
 		dojo.attr(rbNode,'checked', true);
 		this.selectedValue = enumkey;
-		this._setValueAttr(enumkey);
+		this.setValue(enumkey);
 		this.onChange();
 		this.triggerMicroflow();
 	},
@@ -107,29 +78,25 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 		logger.debug(this.id + ".triggerMicroflow");
 		
 		if (this.onchangeAction) {
-                    mx.data.action({
-                        params          : {
-                            applyto     : "selection",
-                            actionname  : this.onchangeAction,
-                            guids       : [this.mendixobject.getGuid()]
-                        },
-                        error           : function(error) {
-                            logger.error("RadioButtonList.widget.AssocRadioButtonList.triggerMicroFlow: XAS error executing microflow; " + error.description);
-                        }
-                    });			
+			mx.data.action({
+				params          : {
+					applyto     : "selection",
+					actionname  : this.onchangeAction,
+					guids       : [this.mendixobject.getGuid()]
+				},
+				error           : function(error) {
+					logger.error("RadioButtonList.widget.AssocRadioButtonList.triggerMicroFlow: XAS error executing microflow; " + error.description);
+				}
+			});			
 		}
 	},
 	
- 	_setDisabledAttr : function (value) {
+	_setDisabledAttr : function (value) {
 		if (!this.readonly)
 			this.attrDisable = !!value;
 	},
 	
-	_getValueAttr : function () {
-		return this.selectedValue;
-	},
-	
-	_setValueAttr : function (oldvalue) {
+	setValue : function (oldvalue) {
 		var value = oldvalue;
 
 		if ( this.selectedValue !== null) {
@@ -158,15 +125,15 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 	
 	//summary : stub function, will be used or replaced by the client environment
 	onChange : function(){
-            this.removeError();
+			this.removeError();
 	},
-        
+		
 	postCreate : function(){
-            // intantiate empty objects, arrays to prefent sharing along widgets
-            this.mendixobject = null;
-            this.keyNodeArray = null;
-            this.handles = null;
-            
+		// intantiate empty objects, arrays to prefent sharing along widgets
+		this.mendixobject = null;
+		this.keyNodeArray = null;
+		this.handles = null;
+			
 		logger.debug(this.id + ".postCreate");
   
 		this.keyNodeArray = {};
@@ -179,7 +146,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
  
 	update : function(obj, callback) {
 		logger.debug(this.id + ".update");
-                this.removeError();
+				this.removeError();
 
 		if(this.handles){
 			dojo.forEach(this.handles, function (handle, i) {
@@ -213,42 +180,41 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 				console && console.error(this.id +'.update: error while loading attr ' + err);
 				loaded = false;
 			}
-
-			var self = this;
-                        
+						
 			var validationhandle = mx.data.subscribe({
-			    guid     : obj.getGuid(),
-			    val      : true,
-			    callback : function(validations) {
-                                var val = validations[0],
-                                    msg = val.getReasonByAttribute(self.name);                            
-                                if(self.readonly){
-			    		val.removeAttribute(self.name);
-			    	} else {                                
-                                    if (msg) {
-                                        self.addError(msg);
-                                        val.removeAttribute(self.name);
-                                    }
-                                }
-			    }
+				guid     : obj.getGuid(),
+				val      : true,
+				callback : dojo.hitch(this,function(validations) {
+					var val = validations[0],
+						msg = val.getReasonByAttribute(this.entity);    
+
+					if(this.readonly){
+						val.removeAttribute(this.entity);
+					} else {                                
+						if (msg) {
+							this.addError(msg);
+							val.removeAttribute(this.name);
+						}
+					}
+				})
 			});
 
 			var refreshhandle = mx.data.subscribe({
-			    guid     : obj.getGuid(),
-			    callback : function(guid) {
-			    	self.update(obj, callback);
-			    }
+				guid     : obj.getGuid(),
+				callback : dojo.hitch(this, function(guid) {
+					this.update(obj, callback);
+				})
 			});
-                        
-                        var refreshAttHandle = mx.data.subscribe({
-			    guid    : obj.getGuid(),
-                            attr    : this.entity,
-			    callback : function(guid) {
-			    	self.update(obj, callback);
-			    }
+						
+			var refreshAttHandle = mx.data.subscribe({
+				guid    : obj.getGuid(),
+				attr    : this.entity,
+				callback : dojo.hitch(this, function(guid) {
+					this.update(obj, callback);
+				})
 			});
-                        
-                        this.handles = [validationhandle, refreshhandle, refreshAttHandle];
+						
+		this.handles = [validationhandle, refreshhandle, refreshAttHandle];
 
 		} else {
 			logger.warn(this.id + '.update: received null object');
@@ -258,7 +224,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 	
 	uninitialize : function(){
 		logger.debug(this.id + ".uninitialize");
-                if(this.handles){
+		if(this.handles){
 			dojo.forEach(this.handles, function (handle, i) {
 				mx.data.unsubscribe(handle);
 			});
