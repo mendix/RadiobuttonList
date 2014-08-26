@@ -46,9 +46,9 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
                 var $ = mxui.dom.create;
 		var i = 0;
 		dojo.empty(this.domNode);
-		var attrName = "" + this.mendixobject.get(this.name);
+		var attrName = "" + this.mendixobject.get(this.entity);
 		for (var key in enumObj) {
-			var radioid = this.name+'_'+this.id+'_'+i;
+			var radioid = this.entity+'_'+this.id+'_'+i;
 			
 			var labelNode = $("label");
 			dojo.attr(labelNode, 'disabled', this.attrDisable);
@@ -140,12 +140,12 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 		}
 		if (this.mendixobject !== null) {
 
-			if(this.mendixobject.isBoolean(this.name)) {
+			if(this.mendixobject.isBoolean(this.entity)) {
 				var boolvalue = oldvalue == 'true' ? true : false;
-				this.mendixobject.set(this.name, boolvalue);
+				this.mendixobject.set(this.entity, boolvalue);
 				this.selectedValue = boolvalue;
 			} else {
-				this.mendixobject.set(this.name, value);
+				this.mendixobject.set(this.entity, value);
 				this.selectedValue = value;
 			}
 		}
@@ -194,12 +194,12 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 
 			this.mendixobject = obj;
 			try {
-				if (this.name != '') {
+				if (this.entity != '') {
 					var enumerationObj;
 					//get enumeration for current attribute
-					if(obj.getAttributeType(this.name) == 'Enum')
-						enumerationObj = obj.getEnumKVPairs(this.name);
-					else if(obj.getAttributeType(this.name) == 'Boolean')
+					if(obj.getAttributeType(this.entity) == 'Enum')
+						enumerationObj = obj.getEnumKVPairs(this.entity);
+					else if(obj.getAttributeType(this.entity) == 'Boolean')
 					{
 						enumerationObj = {};
 						enumerationObj['true'] = this.captiontrue;
@@ -242,7 +242,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
                         
                         var refreshAttHandle = mx.data.subscribe({
 			    guid    : obj.getGuid(),
-                            attr    : this.name,
+                            attr    : this.entity,
 			    callback : function(guid) {
 			    	self.update(obj, callback);
 			    }

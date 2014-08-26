@@ -6,3 +6,4 @@ test/.project
 *.tmp
 *.lock
 test/zip Progress Bar.bat
+.idea/

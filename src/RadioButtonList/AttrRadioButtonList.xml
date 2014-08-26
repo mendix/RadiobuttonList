@@ -16,7 +16,7 @@ xxzfI9WJupnIwKjoNpUQSNnSidx3tqWVkss/3wWpKrfu25w/xfoJ0eY0PiQfhZcAAAAASUVORK5C
 YII=</icon>
 
   <properties>
-		<property key="name" type="attribute" required="true">
+		<property key="entity" type="attribute" required="true">
 		  <caption>Target attribute</caption>
 		  <category>Data source</category>
 		  <description>The attribute which has to be rendered as a radiobutton list.</description> 

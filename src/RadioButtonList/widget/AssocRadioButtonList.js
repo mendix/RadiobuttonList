@@ -195,10 +195,10 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
         
 		logger.debug(this.id + ".postCreate");
 		this.keyNodeArray = {};
-		this.assocName = this.name.split("/")[0];
+		this.assocName = this.entity.split("/")[0];
 		
-		this.name = this.assocName; //to catch data validation
-		//dojo.attr(this.domNode, 'name', this.name);
+		this.entity = this.assocName; //to catch data validation
+		//dojo.attr(this.domNode, 'name', this.entity);
 		
 		if (this.readonly)
 			this.attrDisable = true;
@@ -245,7 +245,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
                         
                         var refreshAttHandle = mx.data.subscribe({
 			    guid    : obj.getGuid(),
-                            attr    : this.name,
+                            attr    : this.entity,
 			    callback : function(guid) {
 			    	self.update(obj, callback);
 			    }

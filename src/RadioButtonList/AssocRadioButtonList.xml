@@ -24,7 +24,7 @@
 		<attributeType name="String"/> 
 	  </attributeTypes>
 	</property>
-	<property key="name" type="entity" required="true" isPath="yes" pathType="reference">
+	<property key="entity" type="entity" required="true" isPath="yes" pathType="reference">
 	  <caption>Target reference</caption>
 	  <category>Data source</category>
 	  <description>Select the reference where the selected item will be saved(Entity must be of the same type as 'Entity to list').</description> 
