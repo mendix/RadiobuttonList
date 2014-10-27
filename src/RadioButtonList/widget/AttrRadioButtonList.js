@@ -193,7 +193,7 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 					} else {                                
 						if (msg) {
 							this.addError(msg);
-							val.removeAttribute(this.name);
+							val.removeAttribute(this.entity);
 						}
 					}
 				})
