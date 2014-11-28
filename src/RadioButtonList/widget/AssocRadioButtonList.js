@@ -9,29 +9,47 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 	templateString : '<div class="RadioButtonList"></div>',
 	
 	//IMPLEMENTATION
-	mendixobject : null,
+    _mxObj          : null,
+	_mxObj   : null,
 	nameName : '',
 	attrDisable :false,
 	selectedValue : null,
 	keyNodeArray : null,
 	handles : null,
 	
-	getListObjects : function(context) {
-		var xpathString = '';
-		if (context)
-			xpathString = "//" + this.RadioListObject + this.Constraint.replace("'[%CurrentObject%]'", context);
-		else
-			xpathString = "//" + this.RadioListObject + this.Constraint;
-
-		mx.data.get({
-					xpath    : xpathString,
-					filter   :  {
-			limit   : 50,
-			depth	: 0,
-			sort    : [[this.sortAttr, this.sortOrder]]
-					},
-					callback : dojo.hitch(this, this.initRadioButtonList)
-				});
+    getListObjects : function(context) {
+        	
+        if (this.dataSourceType === "xpath") {
+            var xpathString = '';
+            if (context)
+            {
+                xpathString = "//" + this.RadioListObject + this.Constraint.replace("'[%CurrentObject%]'", context);
+            }
+            else
+            {
+                xpathString = "//" + this.RadioListObject + this.Constraint;
+            }
+            mx.data.get({
+                xpath    : xpathString,
+                filter   :  {
+                    limit   : 50,
+                    depth	: 0,
+                    sort    : [[this.sortAttr, this.sortOrder]]
+                },
+                callback : dojo.hitch(this, this.initRadioButtonList)
+            });
+        }
+		else if(this.dataSourceType === "mf" && this.datasourceMf)
+        {
+            this.execMF(this._mxObj, this.datasourceMf, dojo.hitch(this, this.initRadioButtonList));
+        }
+        else {
+            dojo.empty(this.domNode);
+            var errordiv = mxui.dom.div("Can't retrieve objects because no datasource microflow is specified");
+            dojo.attr(errordiv, "class", "alert alert-danger");
+            this.domNode.appendChild(errordiv);
+        }
+        
 	},
 	
 	initRadioButtonList : function(mxObjArr){
@@ -41,8 +59,8 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 		
 		var currentSelectedValue;
 		
-		if(this.mendixobject.getReferences(this.assocName).length == 1) {
-			this.selectedValue = currentSelectedValue = this.mendixobject.getReferences(this.assocName)[0];
+		if(this._mxObj.getReferences(this.assocName).length == 1) {
+			this.selectedValue = currentSelectedValue = this._mxObj.getReferences(this.assocName)[0];
 		}
 		
 		for (var i = 0; i < mxObjArr.length; i++) {
@@ -61,7 +79,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 				'id' : radioid
 			});
 
-			dojo.attr(rbNode, 'name', "radio"+this.mendixobject.getGuid()+'_'+this.id);
+			dojo.attr(rbNode, 'name', "radio"+this._mxObj.getGuid()+'_'+this.id);
 
 			this.keyNodeArray[guid] = rbNode;			
 			dojo.attr(rbNode, 'disabled', this.attrDisable);
@@ -110,8 +128,8 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 		}
 		this.selectedValue = value;
 
-		if (this.mendixobject != null) {
-			this.mendixobject.set(this.assocName, value);
+		if (this._mxObj != null) {
+			this._mxObj.set(this.assocName, value);
 		}
 		if (value !== '' && this.keyNodeArray[value]) {
 			this.keyNodeArray[this.selectedValue].checked = true;
@@ -128,7 +146,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 				params          : {
 					applyto     : "selection",
 					actionname  : this.onchangeAction,
-					guids       : [this.mendixobject.getGuid()]
+					guids       : [this._mxObj.getGuid()]
 				},
 				error           : function(error) {
 					logger.error("RadioButtonList.widget.AssocRadioButtonList.triggerMicroFlow: XAS error executing microflow; " + error.description);
@@ -149,7 +167,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 
 	postCreate : function(){
 		// intantiate empty objects, arrays to prefent sharing along widgets
-		this.mendixobject = null;
+
 		this.selectedValue = null;
 		this.handles = null;
 		
@@ -175,7 +193,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 			});
 		}
 		if(obj){
-			this.mendixobject = obj;
+			this._mxObj = obj;
 
 			var validationhandle = mx.data.subscribe({
 				guid     : obj.getGuid(),
@@ -211,12 +229,33 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
 						
 			this.handles = [validationhandle, refreshhandle, refreshAttHandle];
 			
-			this.getListObjects(this.mendixobject);
+			this.getListObjects(this._mxObj);
 		}
 			
 		callback && callback();
 	},
-	
+
+	execMF : function (obj, mf, cb) {
+			var params = {
+				applyto		: "selection",
+				actionname	: mf,
+				guids : []
+			};
+			if (obj)
+				params.guids = [obj.getGuid()];
+
+			mx.data.action({
+				params			: params,			
+				callback		: function(objs) {
+					cb && cb(objs);
+				},
+				error			: function(error) {
+					cb  && cb();
+					logger.warn(error.description);
+				}
+			}, this);
+    }, 
+    
 	uninitialize : function(){
 		logger.debug(this.id + ".uninitialize");
 				if(this.handles){

@@ -220,8 +220,8 @@ mxui.widget.declare('RadioButtonList.widget.AttrRadioButtonList', {
 			logger.warn(this.id + '.update: received null object');
 		}
 		callback && callback();			
-	},        
-	
+	},
+    
 	uninitialize : function(){
 		logger.debug(this.id + ".uninitialize");
 		if(this.handles){
