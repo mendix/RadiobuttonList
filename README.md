@@ -56,11 +56,19 @@ Import the widget to your project and add either Radiobutton List or Radiobutton
 ###### Data source 
 
 * *Entity to list* - Entity containing the attribute which should be rendered as a radiobutton list
-* *XPath constraint* - Constrain the list of objects to be retrieved
 * *Label* - (String) Attribute of which it's contents will be used as label
-* *Target reference* - Association where the reference will be saved.
-* *Sort attribute* - Attribute of which the value will determine the sort order
+* *Association* - Association to be set to the selected option
+* *Sort attribute* - Attribute of which the value will be used to determine the sort order
 * *Sort order* - Determines if values of the sort attribute will be sorted ascending or descending
+* *Data source type* - The method used for retrieving objects
+
+###### Data source (XPath)
+
+* *XPath constraint* - Constrain the list of objects to be retrieved
+
+###### Data source (XPath)
+
+* *Data source microflow* - Microflow returning a list of objects
 
 ###Example
 
@@ -72,7 +80,7 @@ In this case 'Employee' is the owner of an association between the two entities.
 The configuration of the widget's required properties would be:
 Entity to list: CompanyDepartment
 Label: Name (String attribute of  CompanyDepartment)
-Reference: Employee_CompanyDeparment/CompanyDepartment.
+Association: Employee_CompanyDeparment/CompanyDepartment.
 
 ###Known bugs
 
