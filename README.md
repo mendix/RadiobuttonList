@@ -66,7 +66,7 @@ Import the widget to your project and add either Radiobutton List or Radiobutton
 
 * *XPath constraint* - Constrain the list of objects to be retrieved
 
-###### Data source (XPath)
+###### Data source (Microflow)
 
 * *Data source microflow* - Microflow returning a list of objects
 
