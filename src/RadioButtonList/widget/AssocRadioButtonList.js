@@ -23,7 +23,7 @@ mxui.widget.declare('RadioButtonList.widget.AssocRadioButtonList', {
             var xpathString = '';
             if (context)
             {
-                xpathString = "//" + this.RadioListObject + this.Constraint.replace("'[%CurrentObject%]'", context);
+                xpathString = "//" + this.RadioListObject + this.Constraint.replace(/'[%CurrentObject%]'/g, context);
             }
             else
             {
