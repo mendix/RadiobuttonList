@@ -1,0 +1,11 @@
+.RadioButtonList input[type="radio"], 
+.RadioButtonList input[type="checkbox"] {
+margin: 0;
+margin-left: -20px;
+margin-top: 3px;
+}
+
+.RadioButtonList span {
+display: block;
+margin-right: 30px;
+}

@@ -2,8 +2,8 @@ test/javasource/
 test/deployment/
 test/.classpath
 test/.project
+*.mws
 *.launch
 *.tmp
 *.lock
-test/zip Progress Bar.bat
 .idea/
