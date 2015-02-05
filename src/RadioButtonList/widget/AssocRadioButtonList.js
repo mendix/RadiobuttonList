@@ -328,7 +328,7 @@
                     params: params,
                     callback: function (objs) {
                         if (typeof callback !== 'undefined') {
-                            callback();
+                            callback(objs);
                         }
                     },
                     error: function (error) {
