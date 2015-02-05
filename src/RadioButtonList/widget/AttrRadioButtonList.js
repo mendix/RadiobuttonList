@@ -17,7 +17,7 @@
 
         // Declare widget.
         return declare('RadioButtonList.widget.AttrRadioButtonList', [ _WidgetBase, _ValidationHelper, _Widget, _Templated], {
-
+			
             /**
              * Internal variables.
              * ======================

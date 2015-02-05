@@ -176,7 +176,7 @@
                 if (this.dataSourceType === "xpath") {
                     var xpathString = '';
                     if (context) {
-                        xpathString = "//" + this.RadioListObject + this.Constraint.replace('[%CurrentObject%]', context.getGuid());
+						xpathString = "//" + this.RadioListObject + this.Constraint.replace(/\[%CurrentObject%\]/g, context.getGuid());
                         mx.data.get({
                             xpath: xpathString,
                             filter: {
