@@ -6,4 +6,5 @@ test/.project
 *.launch
 *.tmp
 *.lock
+*.bak
 .idea/
