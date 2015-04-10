@@ -236,6 +236,7 @@
 
                     if (currentSelectedValue === mxObj.getGuid()) {
                         domAttr.set(rbNode, 'defaultChecked', true);
+                        dojo.addClass(labelNode, 'checked');
                     }
 
                     var textDiv = $("span", {
@@ -245,7 +246,7 @@
                     labelNode.appendChild(rbNode);
                     labelNode.appendChild(textDiv);
 
-                    this.connect(rbNode, "onclick", lang.hitch(this, this._onclickRadio, mxObj.getGuid(), rbNode));
+                    this.connect(labelNode, "onclick", lang.hitch(this, this._onclickRadio, mxObj.getGuid(), rbNode));
 
                     if (this.direction === "horizontal") {
                         domClass.add(labelNode, "radio-inline");
@@ -279,6 +280,7 @@
                     if (this._selectedValue !== '' && this._keyNodeArray[this._selectedValue]) {
                         this._keyNodeArray[this._selectedValue].checked = false;
                         this._keyNodeArray[this._selectedValue].defaultChecked = false;
+                        dojo.removeClass(this._keyNodeArray[this._selectedValue], 'checked');
                     }
                 }
                 this._selectedValue = value;
@@ -289,6 +291,7 @@
                 if (value !== '' && this._keyNodeArray[value]) {
                     this._keyNodeArray[this._selectedValue].checked = true;
                     this._keyNodeArray[this._selectedValue].defaultChecked = true;
+                    dojo.addClass(this._keyNodeArray[this._selectedValue], 'checked');
                 }
             },
 

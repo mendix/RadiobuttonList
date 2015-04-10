@@ -207,16 +207,17 @@
 
                     domAttr.set(rbNode, 'name',  "radio"+this.mendixobject.getGuid()+'_'+this.id);			
 
-                    this.keyNodeArray[key] = rbNode;			
+                    this.keyNodeArray[key] = rbNode;
                     domAttr.set(rbNode, 'disabled', this._attrDisable);	
 
                     if (attrName == key) {
                         domAttr.set(rbNode,'defaultChecked', true);
+                        dojo.addClass(labelNode, 'checked');
                         this.selectedValue = key;
                     }
 
-                    var textDiv = mxui.dom.span(enumObj[key]);
-                    this.connect(rbNode, "onclick", lang.hitch(this, this._onChangeRadio, rbNode, key));			
+                    var textDiv = mxui.dom.span(enumObj[key]);		
+                    this.connect(labelNode, "onclick", lang.hitch(this, this._onChangeRadio, rbNode, key));
 
                     labelNode.appendChild(rbNode);
                     labelNode.appendChild(textDiv);
@@ -275,6 +276,7 @@
                     if ( this.selectedValue !== '' && this.keyNodeArray[this.selectedValue] ) {
                         this.keyNodeArray[this.selectedValue].checked = false;
                         this.keyNodeArray[this.selectedValue].defaultChecked = false;
+                        dojo.removeClass(this.keyNodeArray[this.selectedValue].parentNode, "checked");
                     }
                 }
                 if (this.mendixobject !== null) {
@@ -292,7 +294,8 @@
                 if (value !== '' && this.keyNodeArray[value]) {
                     this.keyNodeArray[this.selectedValue].checked = true;
                     this.keyNodeArray[this.selectedValue].defaultChecked = true;
-                }	
+                    dojo.addClass(this.keyNodeArray[this.selectedValue].parentNode, "checked");
+                }
             }
 
         });
