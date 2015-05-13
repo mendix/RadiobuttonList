@@ -2,7 +2,7 @@
 /*global mx, define, require, browser, devel, console, document, jQuery, mxui, dojo */
 /*mendix */
 /*
-    HelloWorld
+    AssocRadioButtonList
     ========================
 
     @file      : AssocRadioButtonList.js
@@ -18,7 +18,7 @@
 */
 
 // Required module list. Remove unnecessary modules, you can always get them back from the boilerplate.
-require([
+define([
     "dojo/_base/declare", "mxui/widget/_WidgetBase", "dijit/_TemplatedMixin",
     "mxui/dom", "dojo/dom", "dojo/query", "dojo/dom-prop", "dojo/dom-geometry", "dojo/dom-attr", "dojo/dom-class", "dojo/dom-style", "dojo/dom-construct", "dojo/on", "dojo/_base/lang", "dojo/text",
     "dojo/_base/array", "dojo/text!widgets/RadioButtonList/widget/templates/RadioButtonList.html"
@@ -30,7 +30,7 @@ require([
     return declare("RadioButtonList.widget.AssocRadioButtonList", [_WidgetBase, _TemplatedMixin], {
 
         // Template path
-        templatePath: dojo.moduleUrl('RadioButtonList', 'widget/templates/RadioButtonList.html'),
+        templateString: widgetTemplate, //dojo.moduleUrl('RadioButtonList', 'widget/templates/RadioButtonList.html'),
         
         /**
          * Internal variables.
@@ -334,4 +334,7 @@ require([
 
 
     });
+});
+require(["RadioButtonList/widget/AssocRadioButtonList"], function () {
+    "use strict";
 });
