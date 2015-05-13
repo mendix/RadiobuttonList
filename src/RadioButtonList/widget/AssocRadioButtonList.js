@@ -21,7 +21,7 @@
 define([
     "dojo/_base/declare", "mxui/widget/_WidgetBase", "dijit/_TemplatedMixin",
     "mxui/dom", "dojo/dom", "dojo/query", "dojo/dom-prop", "dojo/dom-geometry", "dojo/dom-attr", "dojo/dom-class", "dojo/dom-style", "dojo/dom-construct", "dojo/on", "dojo/_base/lang", "dojo/text",
-    "dojo/_base/array", "dojo/text!widgets/RadioButtonList/widget/templates/RadioButtonList.html"
+    "dojo/_base/array", "dojo/text!RadioButtonList/widget/templates/RadioButtonList.html"
 ], function (declare, _WidgetBase, _TemplatedMixin, 
               domMx, dom, domQuery, domProp, domGeom, domAttr, domClass, domStyle, domConstruct, on, lang, text, dojoArray, widgetTemplate) {
     "use strict";
