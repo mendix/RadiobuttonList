@@ -31,7 +31,7 @@
 	  <category>Data source (XPath)</category>
 	  <description>Constrain the items to be shown in the radiobutton list </description>
 	</property>
-	<property key="sortAttr" type="attribute" entityProperty="RadioListObject" required="true">
+	<property key="sortAttr" type="attribute" entityProperty="RadioListObject" required="false">
 	  <caption>Sort attribute(XPath)</caption>
 	  <category>Data source (XPath)</category>
 	  <description>This fields provides the sort attribute of the list.</description> 
@@ -47,7 +47,7 @@
 		<attributeType name="String"/>
 	  </attributeTypes>
 	</property>
-	<property key="sortOrder" type="enumeration" defaultValue="asc"  required="true">
+	<property key="sortOrder" type="enumeration" defaultValue="asc"  required="false">
 	  <caption>Sort order(XPath)</caption>
 	  <category>Data source</category>
 	  <description>The sort order.</description>
