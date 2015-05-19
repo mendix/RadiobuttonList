@@ -51,10 +51,6 @@ define([
             this.keyNodeArray = null;
             this.handles = null;
 
-            this.keyNodeArray = {};
-            if (this.readonly) {
-                this._attrDisable = true;
-            }
 
             // To be able to just alter one variable in the future we set an internal variable with the domNode that this widget uses.
             this._wgtNode = this.domNode;
@@ -69,6 +65,12 @@ define([
         // DOJO.WidgetBase -> PostCreate is fired after the properties of the widget are set.
         postCreate: function () {
             console.log("AttrRadioButtonList - postCreate");
+            
+            this.keyNodeArray = {};
+            if (this.readonly) {
+                this._attrDisable = true;
+            }
+            this._wgtNode = this.domNode;
         },
 
         /**
@@ -200,7 +202,11 @@ define([
 
                     labelNode = $("label");
                     
-                    domAttr.set(labelNode, "disabled", this._attrDisable);
+                    if (this._attrDisable) {    
+                        domAttr.set(labelNode, "disabled", "disabled");
+                        domAttr.set(labelNode, "readonly", "readonly");
+                    }
+
 
                     rbNode = $("input", {
                         "type" : "radio",
@@ -212,8 +218,11 @@ define([
 
                     this.keyNodeArray[key] = rbNode;
                     
-                    domAttr.set(rbNode, "disabled", this._attrDisable);	
-
+                    if (this._attrDisable) {    
+                        domAttr.set(rbNode, "disabled", "disabled");
+                        domAttr.set(rbNode, "readonly", "readonly");
+                    }
+                    
                     if (attrName === key) {
                         domAttr.set(rbNode,"defaultChecked", true);
                         domClass.add(labelNode, "checked");

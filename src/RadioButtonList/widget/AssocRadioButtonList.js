@@ -210,7 +210,10 @@ define([
 
                 labelNode = $("label");
 
-                domAttr.set(labelNode, "disabled", this._attrDisable);
+                if (this._attrDisable) {    
+                    domAttr.set(labelNode, "disabled", "disabled");
+                    domAttr.set(labelNode, "readonly", "readonly");
+                }
 
                 guid = mxObj.getGuid();
                 
@@ -223,8 +226,11 @@ define([
                 domAttr.set(rbNode, "name", "radio" + this._mxObj.getGuid() + "_" + this.id);
 
                 this._keyNodeArray[guid] = rbNode;
-                
-                domAttr.set(rbNode, "disabled", this._attrDisable);
+             
+                if (this._attrDisable) {    
+                    domAttr.set(rbNode, "disabled", "disabled");
+                    domAttr.set(rbNode, "readonly", "readonly");
+                }
 
                 if (currentSelectedValue === mxObj.getGuid()) {
                     domAttr.set(rbNode, "defaultChecked", true);
