@@ -47,7 +47,7 @@
 		<attributeType name="String"/>
 	  </attributeTypes>
 	</property>
-	<property key="sortOrder" type="enumeration" defaultValue="asc"  required="false">
+	<property key="sortOrder" type="enumeration" defaultValue="asc">
 	  <caption>Sort order(XPath)</caption>
 	  <category>Data source</category>
 	  <description>The sort order.</description>

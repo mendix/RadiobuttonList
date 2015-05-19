@@ -111,7 +111,7 @@ define([
             errorhandled = false;
 
             if (obj) {
-
+                domStyle.set(this.domNode, 'display', 'block');
                 this._mxObj = obj;
 
                 this._preInitRadioButtonList(obj);
@@ -165,6 +165,7 @@ define([
 
             } else {
                 console.log(this.id + ".update: received null object");
+                domStyle.set(this.domNode, 'display', 'none');
             }
 
             // Execute callback.

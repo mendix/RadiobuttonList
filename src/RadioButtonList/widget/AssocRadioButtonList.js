@@ -88,6 +88,7 @@ define([
             }
             
             if (obj) {
+                domStyle.set(this.domNode, 'display', 'block');
                 this._mxObj = obj;
 
                 validationhandle = this.subscribe({
@@ -137,6 +138,8 @@ define([
                 this._handles = [validationhandle, refreshhandle, refreshAttHandle];
 
                 this._getListObjects(this._mxObj);
+            } else {
+                domStyle.set(this.domNode, 'display', 'none');
             }
 
             // Execute callback.
