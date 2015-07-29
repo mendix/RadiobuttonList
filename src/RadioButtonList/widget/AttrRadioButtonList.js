@@ -223,7 +223,7 @@ define([
                         domAttr.set(rbNode, "readonly", "readonly");
                     }
                     
-                    if (attrName === key) {
+                    if (""+attrName === key) {
                         domAttr.set(rbNode,"defaultChecked", true);
                         domClass.add(labelNode, "checked");
                         this.selectedValue = key;
