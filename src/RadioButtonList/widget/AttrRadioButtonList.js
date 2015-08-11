@@ -1,21 +1,6 @@
 /*jslint white:true, nomen: true, plusplus: true */
 /*global mx, define, require, browser, devel, console, document, jQuery, mxui */
 /*mendix */
-/*
-    AttrRadioButtonList
-    ========================
-
-    @file      : AttrRadioButtonList.js
-    @version   : 1.0
-    @author    : Gerhard Richard Edens
-    @date      : Wed, 24 Apr 2015 09:28:00 GMT
-    @copyright : Mendix b.v.
-    @license   : Apache 2
-
-    Documentation
-    ========================
-    ...
-*/
 
 // Required module list. Remove unnecessary modules, you can always get them back from the boilerplate.
 define([
@@ -67,7 +52,8 @@ define([
             console.log("AttrRadioButtonList - postCreate");
             
             this.keyNodeArray = {};
-            if (this.readonly) {
+            if (this.readonly || this.get('disabled')) {
+				//this.readonly isn't in client API, this.get('disabled') works correctly since 5.18.
                 this._attrDisable = true;
             }
             this._wgtNode = this.domNode;
@@ -79,6 +65,9 @@ define([
 
         _preInitRadioButtonList: function(obj){
             var enumerationObj = null;
+				
+			this._attrDisable =	obj.isReadonlyAttr(this.entity);
+				
             try {
                 if (this.entity !== "") {
                     //get enumeration for current attribute
