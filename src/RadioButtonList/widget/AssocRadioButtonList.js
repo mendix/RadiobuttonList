@@ -57,12 +57,12 @@ define([
 			// DOJO.WidgetBase -> PostCreate is fired after the properties of the widget are set.
 			postCreate: function () {
 
-				this._keyNodeArray = {};
 				this._assocName = (typeof this.entity !== 'undefined' && this.entity !== '') ? this.entity.split("/")[0] : '';
 				this.entity = this._assocName; //to catch data validation
 
-				if (this.readOnly || this.get('disabled')) {
+				if (this.readOnly || this.get('disabled') || this.readonly) {
 					//this.readOnly isn't available in client API, this.get('disabled') works correctly since 5.18.
+					//this.readonly is a widget property
 					this._isReadOnly = true;
 				}
 
@@ -135,7 +135,8 @@ define([
 				var validation = validations[0],
 					message = validation.getReasonByAttribute(this.entity);
 
-				if (this.readOnly) {
+				if (this._isReadOnly ||
+					this._contextObj.isReadonlyAttr(this.entity)) {
 					validation.removeAttribute(this.entity);
 				} else if (message) {
 					this._addValidation(message);
@@ -284,7 +285,8 @@ define([
 
 				labelNode = dojoConstruct.create("label");
 
-				if (this._isReadOnly) {
+				if (this._isReadOnly ||
+					this._contextObj.isReadonlyAttr(this.entity)) {
 					dojoAttr.set(labelNode, "disabled", "disabled");
 					dojoAttr.set(labelNode, "readonly", "readonly");
 				}
@@ -315,7 +317,8 @@ define([
 
 				dojoAttr.set(radiobuttonNode, "name", "radio" + this._contextObj.getGuid() + "_" + this.id);
 
-				if (this._isReadOnly) {
+				if (this._isReadOnly ||
+					this._contextObj.isReadonlyAttr(this.entity)) {
 					dojoAttr.set(radiobuttonNode, "disabled", "disabled");
 					dojoAttr.set(radiobuttonNode, "readonly", "readonly");
 				}
@@ -331,9 +334,8 @@ define([
 
 				this.connect(labelNode, "onclick", dojoLang.hitch(this, function () {
 
-					//				var selectedValue = null;
-
-					if (this._isReadOnly) {
+					if (this._isReadOnly || 
+						this._contextObj.isReadonlyAttr(this.entity)) {
 						return;
 					}
 
