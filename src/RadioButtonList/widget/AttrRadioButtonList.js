@@ -4,311 +4,306 @@
 
 // Required module list. Remove unnecessary modules, you can always get them back from the boilerplate.
 define([
-    "dojo/_base/declare", "mxui/widget/_WidgetBase", "dijit/_TemplatedMixin",
-    "mxui/dom", "dojo/dom", "dojo/query", "dojo/dom-prop", "dojo/dom-geometry", "dojo/dom-attr", "dojo/dom-class", "dojo/dom-style",  "dojo/dom-construct",  "dojo/on", "dojo/_base/lang", "dojo/text",
-    "dojo/_base/array", "dojo/text!RadioButtonList/widget/templates/RadioButtonList.html"
-], function (declare, _WidgetBase, _TemplatedMixin,
-              domMx, dom, domQuery, domProp, domGeom, domAttr, domClass, domStyle, domConstruct, on, lang, text, dojoArray, widgetTemplate) {
-    "use strict";
+		"dojo/_base/declare",
+		"mxui/widget/_WidgetBase",
+		"dijit/_TemplatedMixin",
+		"mxui/dom",
+		"dojo/dom-class",
+		"dojo/dom-style",
+		"dojo/dom-construct",
+		"dojo/dom-attr",
+		"dojo/_base/lang",
+		"dojo/html",
+	"dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
+	], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoLang, dojoHtml, widgetTemplate) {
+	"use strict";
 
-    // Declare widget.
-    return declare("RadioButtonList.widget.AttrRadioButtonList", [_WidgetBase, _TemplatedMixin], {
+	// Declare widget's prototype.
+	return declare("RadioButtonList.widget.AttrRadioButtonList", [_WidgetBase, _TemplatedMixin], {
+		// _TemplatedMixin will create our dom node using this HTML template.
+		templateString: widgetTemplate,
 
-        // Template path
-        templateString: widgetTemplate, //dojo.moduleUrl("RadioButtonList", "widget/templates/RadioButtonList.html"),
+		// DOM elements
+		inputNodes: null,
 
-        /**
-         * Internal variables.
-         * ======================
-         */
-        _wgtNode: null,
-        _attrDisable : false, 
+		// Parameters configurable in Business Modeler.
+		entity: null,
+		direction: "vertical",
+		captiontrue: "",
+		captionfalse: "",
+		readonly: false,
+		onchangeAction: "",
 
-        _mxObj: null,
+		// Internal variables. Non-primitives created in the prototype are shared between all widget instances.
+		_handles: null,
+		_contextObj: null,
+		_alertDiv: null,
+		_radioButtonOptions: null,
+		_isReadOnly: false,
 
-        /**
-         * Extra setup widget methods.
-         * ======================
-         */
-        constructor: function () {
+		// dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
+		constructor: function () {
+			this._handles = [];
+		},
 
-            this._mxObj = null;
-            this.keyNodeArray = null;
-            this.handles = null;
+		// dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
+		postCreate: function () {
+			console.debug(this.id + ".postCreate");
 
+			if (this.readOnly || this.get('disabled')) {
+				//this.readOnly isn't available in client API, this.get('disabled') works correctly since 5.18.
+				this._isReadOnly = true;
+			}
+			
+			this._updateRendering();
+		},
 
-            // To be able to just alter one variable in the future we set an internal variable with the domNode that this widget uses.
-            this._wgtNode = this.domNode;
+		// mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
+		update: function (obj, callback) {
+			console.debug(this.id + ".update");
 
-        },
+			this._contextObj = obj;
+			this._resetSubscriptions();
+			this._setRadiobuttonOptions();
+			this._updateRendering();
 
-        /**
-         * Mendix Widget methods.
-         * ======================
-         */
+			callback();
+		},
 
-        // DOJO.WidgetBase -> PostCreate is fired after the properties of the widget are set.
-        postCreate: function () {
-            console.log("AttrRadioButtonList - postCreate");
-            
-            this.keyNodeArray = {};
-            if (this.readonly || this.get('disabled')) {
-				//this.readonly isn't in client API, this.get('disabled') works correctly since 5.18.
-                this._attrDisable = true;
-            }
-            this._wgtNode = this.domNode;
-        },
+		// mxui.widget._WidgetBase.enable is called when the widget should enable editing. Implement to enable editing if widget is input widget.
+		enable: function () {},
 
-        /**
-         * What to do when data is loaded?
-         */
+		// mxui.widget._WidgetBase.enable is called when the widget should disable editing. Implement to disable editing if widget is input widget.
+		disable: function () {},
 
-        _preInitRadioButtonList: function(obj){
-            var enumerationObj = null;
+		// mxui.widget._WidgetBase.resize is called when the page's layout is recalculated. Implement to do sizing calculations. Prefer using CSS instead.
+		resize: function (box) {},
+
+		// mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
+		uninitialize: function () {
+			// Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
+		},
+
+		// Rerender the interface.
+		_updateRendering: function () {
+
+			if (this._contextObj !== null) {
+				dojoStyle.set(this.domNode, "display", "block");
+
+				this._createRadiobuttonNodes();
+
+			} else {
+				dojoStyle.set(this.domNode, "display", "none");
+			}
+
+			// Important to clear all validations!
+			this._clearValidations();
+		},
+
+		// Handle validations.
+		_handleValidation: function (validations) {
+			this._clearValidations();
+
+			var validation = validations[0],
+				message = validation.getReasonByAttribute(this.entity);
+
+			if (this.readOnly) {
+				validation.removeAttribute(this.entity);
+			} else if (message) {
+				this._addValidation(message);
+				validation.removeAttribute(this.entity);
+			}
+		},
+
+		// Clear validations.
+		_clearValidations: function () {
+			dojoConstruct.destroy(this._alertDiv);
+			this._alertDiv = null;
+		},
+
+		// Show an error message.
+		_showError: function (message) {
+			if (this._alertDiv !== null) {
+				dojoHtml.set(this._alertDiv, message);
+				return true;
+			}
+			this._alertDiv = dojoConstruct.create("div", {
+				"class": "alert alert-danger",
+				"innerHTML": message
+			});
+			dojoConstruct.place(this._alertDiv, this.domNode);
+		},
+
+		// Add a validation.
+		_addValidation: function (message) {
+			this._showError(message);
+		},
+
+		// Reset subscriptions.
+		_resetSubscriptions: function () {
+			
+			var validationHandle = null, objectHandle = null, attrHandle = null;
+			
+			// Release handles on previous object, if any.
+			if (this._handles) {
+				this._handles.forEach(function (handle) {
+					mx.data.unsubscribe(handle);
+				});
+				this._handles = [];
+			}
+
+			// When a mendix object exists create subscribtions. 
+			if (this._contextObj) {
+				validationHandle = mx.data.subscribe({
+					guid     : this._contextObj.getGuid(),
+					val      : true,
+					callback : dojoLang.hitch(this, this._handleValidation)
+				});
+
+				objectHandle = mx.data.subscribe({
+					guid     : this._contextObj.getGuid(),
+					callback: dojoLang.hitch(this, function (guid) {
+						this._updateRendering();
+					})
+				});
+
+				attrHandle = mx.data.subscribe({
+					guid    : this._contextObj.getGuid(),
+					attr    : this.entity,
+					callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
+						this._updateRendering();
+					})
+				});
+
+				this.handles = [validationHandle, objectHandle, attrHandle];
+			}
+		},
+
+		_setRadiobuttonOptions: function () {
+			if (this.entity !== "" && this._contextObj) {
+				//get enumeration for current attribute
+				if(this._contextObj.getAttributeType(this.entity) === "Enum") {
+					this._radioButtonOptions = this._contextObj.getEnumKVPairs(this.entity);
+				} else if(this._contextObj.getAttributeType(this.entity) === "Boolean") {
+					this._radioButtonOptions = {};
+					this._radioButtonOptions["true"] = this.captiontrue;
+					this._radioButtonOptions["false"] = this.captionfalse;
+				}
+			}
+		},
+
+		_createRadiobuttonNodes: function () {
+
+			var labelNode = null,
+				radioButtonNode = null,
+				i = 0,
+				enclosingDivElement = null;
+
+			dojoConstruct.empty(this.inputNodes);
+			
+			for (var option in this._radioButtonOptions) {
+				if (this._radioButtonOptions.hasOwnProperty(option)) {
+
+					labelNode = this._createLabelNode(option, this._radioButtonOptions[option]);
+					radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option]);
+
+					this._addOnclickToRadiobuttonItem(labelNode, radioButtonNode, i);
+					
+					dojoConstruct.place(radioButtonNode, labelNode, "first");
+					
+					if(this.direction === "horizontal"){
+						dojoConstruct.place(labelNode, this.inputNodes, "last");
+					} else {
+						//an enclosing div element is required to vertically align a radiobuttonlist in bootstrap. 
+						enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
+						dojoConstruct.place(labelNode, enclosingDivElement, "last");
+						dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+					}
+					
+					i++;
+				}
+			}
+		},
+
+		_createLabelNode: function (key, value) {
+
+			var labelNode = null;
+
+			labelNode = dojoConstruct.create("label");
+
+			if (this._isReadOnly) {
+				dojoAttr.set(labelNode, "disabled", "disabled");
+				dojoAttr.set(labelNode, "readonly", "readonly");
+			}
+
+			if ("" + this._contextObj.get(this.entity) === key) {
+				dojoClass.add(labelNode, "checked");
+			}
+			
+			if(this.direction === "horizontal"){
+				dojoClass.add(labelNode, "radio-inline");
+			}
+
+			dojoConstruct.place(dojoConstruct.create("span", {
+				"innerHTML": value
+			}), labelNode );
+
+			return labelNode;
+		},
+
+		_createRadiobuttonNode: function (key, value, index) {
+			var radiobuttonNode = null;
+
+			radiobuttonNode = dojoConstruct.create("input", {
+				"type": "radio",
+				"value": key,
+				"id": this.entity + "_" + this.id + "_" + index
+			});
+
+			dojoAttr.set(radiobuttonNode, "name", "radio" + this._contextObj.getGuid() + "_" + this.id);
+
+			if (this._isReadOnly) {
+				dojoAttr.set(radiobuttonNode, "disabled", "disabled");
+				dojoAttr.set(radiobuttonNode, "readonly", "readonly");
+			}
+
+			if ("" + this._contextObj.get(this.entity) === key) {
+				dojoAttr.set(radiobuttonNode, "defaultChecked", true);
+			}
+
+			return radiobuttonNode;
+		},
+
+		_addOnclickToRadiobuttonItem: function (labelNode, radiobuttonNode) {
+
+			this.connect(labelNode, "onclick", dojoLang.hitch(this, function () {
+
+				var selectedValue = null;
 				
-			this._attrDisable =	obj.isReadonlyAttr(this.entity);
+				if (this._isReadOnly) {
+					return;
+				}
+
+				dojoAttr.set(radiobuttonNode, "checked", true);
+				this._contextObj.set(this.entity, dojoAttr.get(radiobuttonNode, "value"));
 				
-            try {
-                if (this.entity !== "") {
-                    //get enumeration for current attribute
-                    if(obj.getAttributeType(this.entity) === "Enum") {
-                        enumerationObj = obj.getEnumKVPairs(this.entity);
-                    } else if(obj.getAttributeType(this.entity) === "Boolean") {
-                        enumerationObj = {};
-                        enumerationObj["true"] = this.captiontrue;
-                        enumerationObj["false"] = this.captionfalse;
-                    }
-                    this._initRadioButtonList(enumerationObj);
-                }
-            }
-            catch (err) {
-                console.error(this.id +".update: error while loading attr " + err);
-            }
-        },
-
-        update: function (obj, callback) {
-            console.log("AttrRadioButtonList - update");
-
-            var errorhandled = null,
-                validationhandle = null, refreshhandle = null, refreshAttHandle = null;
-
-            if(this.handles){
-                dojoArray.forEach(this.handles, lang.hitch(this, function (handle, i) {
-                    this.unsubscribe(handle);
-                }));
-            }
-
-            //load embedded
-            errorhandled = false;
-
-            if (obj) {
-                domStyle.set(this.domNode, 'display', 'block');
-                this._mxObj = obj;
-
-                this._preInitRadioButtonList(obj);
-
-                validationhandle = mx.data.subscribe({
-                    guid     : obj.getGuid(),
-                    val      : true,
-                    callback : lang.hitch(this,function(validations) {
-                        var val = validations[0],
-                            msg = val.getReasonByAttribute(this.entity);    
-
-                        if(this.readonly){
-                            val.removeAttribute(this.entity);
-                        } else {                                
-                            if (msg) {
-                                this.addError(msg);
-                                val.removeAttribute(this.entity);
-                            }
-                        }
-                    })
-                });
-
-                refreshhandle = mx.data.subscribe({
-                    guid     : obj.getGuid(),
-                    callback : lang.hitch(this, function(guid) {
-                        mx.data.get({
-                            guids    : [guid],
-                            callback : lang.hitch(this, function(objs) {
-                                this._mxObj = objs[0];
-                                this._preInitRadioButtonList(this._mxObj);
-                            })
-                        });
-                    })
-                });
-
-                refreshAttHandle = mx.data.subscribe({
-                    guid    : obj.getGuid(),
-                    attr    : this.entity,
-                    callback : lang.hitch(this, function(guid) {
-                        mx.data.get({
-                            guids    : [guid],
-                            callback : lang.hitch(this, function(objs) {
-                                this._mxObj = objs[0];
-                                this._preInitRadioButtonList(this._mxObj);
-                            })
-                        });
-                    })
-                });
-
-                this.handles = [validationhandle, refreshhandle, refreshAttHandle];
-
-            } else {
-                console.log(this.id + ".update: received null object");
-                domStyle.set(this.domNode, 'display', 'none');
-            }
-
-            // Execute callback.
-            callback();
-        },
-
-        uninitialize : function(){
-            if(this.handles){
-                dojoArray.forEach(this.handles, lang.hitch(this, function (handle, i) {
-                    this.unsubscribe(handle);
-                }));
-            }
-        },
-
-
-        /**
-         * Interaction widget methods.
-         * ======================
-         */
-        _initRadioButtonList : function(enumObj){
-            var $ = domConstruct.create,
-                i = 0,
-                attrName = null, key = null, radioid = null, labelNode = null, rbNode = null, textDiv = null, radiodiv = null;
-
-            domConstruct.empty(this.domNode);
-
-            attrName = this._mxObj.get(this.entity);
-
-            for (key in enumObj) {
-                if (enumObj.hasOwnProperty(key)) {
-                    radioid = this.entity + "_" + this.id + "_" + i;
-
-                    labelNode = $("label");
-                    
-                    if (this._attrDisable) {    
-                        domAttr.set(labelNode, "disabled", "disabled");
-                        domAttr.set(labelNode, "readonly", "readonly");
-                    }
-
-
-                    rbNode = $("input", {
-                        "type" : "radio",
-                        "value" : key,
-                        "id" : radioid
-                    });
-
-                    domAttr.set(rbNode, "name",  "radio" + this._mxObj.getGuid() + "_" + this.id);			
-
-                    this.keyNodeArray[key] = rbNode;
-                    
-                    if (this._attrDisable) {    
-                        domAttr.set(rbNode, "disabled", "disabled");
-                        domAttr.set(rbNode, "readonly", "readonly");
-                    }
-                    
-                    if (""+attrName === key) {
-                        domAttr.set(rbNode,"defaultChecked", true);
-                        domClass.add(labelNode, "checked");
-                        this.selectedValue = key;
-                    }
-
-                    textDiv = mxui.dom.span(enumObj[key]);		
-                    this.connect(labelNode, "onclick", lang.hitch(this, this._onChangeRadio, rbNode, key));
-
-                    domConstruct.place(rbNode, labelNode, "last");
-                    domConstruct.place(textDiv, labelNode, "last");
-
-                    if(this.direction === "horizontal"){
-                        domClass.add(labelNode, "radio-inline");
-                        domConstruct.place(labelNode, this.domNode, "last");
-                    } else {
-                        radiodiv = $("div", {"class" : "radio"});
-                        domConstruct.place(labelNode, radiodiv, "last");
-                        domConstruct.place(radiodiv, this.domNode, "last");
-                    }
-
-                    i++;
-                }
-            }
-        },
-
-        _onChangeRadio : function(rbNode, enumkey) {
-
-            if (this._attrDisable) {
-                return;
-            }
-
-            domAttr.set(rbNode,"checked", true);
-            
-            this.selectedValue = enumkey;
-            this._setValue(enumkey);
-            this._triggerMicroflow();
-            
-        },
-
-        //invokes the microflow coupled to the tag editor
-        _triggerMicroflow : function() {
-
-            if (this.onchangeAction) {
-                mx.data.action({
-                    params          : {
-                        applyto     : "selection",
-                        actionname  : this.onchangeAction,
-                        guids       : [this._mxObj.getGuid()]
-                    },
-                    error           : function(error) {
-                        console.log("RadioButtonList.widget.AssocRadioButtonList._triggerMicroflow: XAS error executing microflow; " + error.description);
-                    }
-                });			
-            }
-            
-        },
-
-        _setDisabledAttr : function (value) {
-            if (!this.readonly) {
-                this._attrDisable = !!value;
-            }
-        },
-
-        _setValue : function (oldvalue) {
-            var value = oldvalue,
-                boolvalue = null;
-
-            if (this.selectedValue !== null) {
-                if (this.selectedValue !== "" && this.keyNodeArray[this.selectedValue]) {
-                    this.keyNodeArray[this.selectedValue].checked = false;
-                    this.keyNodeArray[this.selectedValue].defaultChecked = false;
-                    domClass.remove(this.keyNodeArray[this.selectedValue].parentNode, "checked");
-                }
-            }
-            
-            if (this._mxObj !== null) {
-
-                if (this._mxObj.isBoolean(this.entity)) {
-                    boolvalue = oldvalue === "true" ? true : false;
-                    this._mxObj.set(this.entity, boolvalue);
-                    this.selectedValue = boolvalue;
-                } else {
-                    this._mxObj.set(this.entity, value);
-                    this.selectedValue = value;
-                }
-            }
-
-            if (value !== "" && this.keyNodeArray[value]) {
-                this.keyNodeArray[this.selectedValue].checked = true;
-                this.keyNodeArray[this.selectedValue].defaultChecked = true;
-                domClass.add(this.keyNodeArray[this.selectedValue].parentNode, "checked");
-            }
-        }
-
-    });
+				if (this.onchangeAction) {
+					mx.data.action({
+						params          : {
+							applyto     : "selection",
+							actionname  : this.onchangeAction,
+							guids       : [this._contextObj.getGuid()]
+						},
+						error           : function(error) {
+							console.log("RadioButtonList.widget.AttrRadioButtonList._addOnclickToRadiobuttonItem: XAS error executing microflow; " + error.description);
+						}
+					});			
+				}
+			}));
+		}
+	});
 });
+
 require(["RadioButtonList/widget/AttrRadioButtonList"], function () {
-    "use strict";
+	"use strict";
 });
