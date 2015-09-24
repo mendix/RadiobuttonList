@@ -45,6 +45,7 @@ define([
 			_radioButtonOptions: null,
 			_isReadOnly: false,
 			_assocName: null,
+			_locatedInListview: false,
 
 			/**
 			 * Mendix Widget methods.
@@ -66,6 +67,10 @@ define([
 					this._isReadOnly = true;
 				}
 
+				this._locatedInListview = this._checkParentElementsForListview(this.domNode.parentNode);
+				
+				this._reserveSpace();	
+				
 				this._updateRendering();
 			},
 
@@ -84,32 +89,21 @@ define([
 
 			},
 
-			// mxui.widget._WidgetBase.enable is called when the widget should enable editing. Implement to enable editing if widget is input widget.
-			enable: function () {},
-
-			// mxui.widget._WidgetBase.enable is called when the widget should disable editing. Implement to disable editing if widget is input widget.
-			disable: function () {},
-
-			// mxui.widget._WidgetBase.resize is called when the page's layout is recalculated. Implement to do sizing calculations. Prefer using CSS instead.
-			resize: function (box) {},
-
-			// mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
-			uninitialize: function () {
-				// Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
-			},
-
-
 			_setRadiobuttonOptions: function () {
 
-				if (this.dataSourceType === "xpath") {
-					this._getDataFromXPath();
-				} else if (this.dataSourceType === "mf" && this.datasourceMf) {
-					this._getDataFromDatasource();
-				} else {
-					this._showError("Can\"t retrieve objects because no datasource microflow is specified");
+				if (this._contextObj) {
+					if (this.dataSourceType === "xpath") {
+						this._getDataFromXPath();
+					} else if (this.dataSourceType === "mf" && this.datasourceMf) {
+						this._getDataFromDatasource();
+					} else {
+						this._showError("Can\"t retrieve objects because no datasource microflow is specified");
+					}
+				}
+				else {
+					this._updateRendering();
 				}
 				
-				dojoConstruct.empty(this.inputNodes);
 			},
 
 			// Rerender the interface.
@@ -120,8 +114,11 @@ define([
 
 					this._createRadiobuttonNodes();
 
-				} else {
-					dojoStyle.set(this.domNode, "display", "none");
+				} 
+				else {
+					if(!this._locatedInListview) {
+						dojoStyle.set(this.domNode, "display", "none");
+					}
 				}
 
 				// Important to clear all validations!
@@ -248,13 +245,19 @@ define([
 
 			_createRadiobuttonNodes: function (mxObjArr) {
 				var mxObj = null,
-					i = null,
+					i = 0,
+					j = 0,
 					labelNode = null,
 					radioButtonNode = null,
-					enclosingDivElement = null;
+					enclosingDivElement = null,
+					nodelength = 0;
+				
+				nodelength = this.inputNodes.children.length;
 
-				dojoConstruct.empty(this.inputNodes);
-
+				if(this.direction === "horizontal") {
+					dojoConstruct.empty(this.inputNodes);
+				}
+				
 				for (var option in this._radioButtonOptions) {
 					if (this._radioButtonOptions.hasOwnProperty(option)) {
 
@@ -269,14 +272,30 @@ define([
 							dojoConstruct.place(labelNode, this.inputNodes, "last");
 						} else {
 							//an enclosing div element is required to vertically align a radiobuttonlist in bootstrap. 
-							enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
-							dojoConstruct.place(labelNode, enclosingDivElement, "last");
-							dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+							if(this.inputNodes.children[i])	{
+								enclosingDivElement = this.inputNodes.children[i];
+							}
+							else
+							{
+								enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
+							}
+							dojoConstruct.place(labelNode, enclosingDivElement, "only");
+							if(!this.inputNodes.children[i]) {
+								dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+							}
 						}
 
 						i++;
 					}
 				}
+				j= i;
+				if(j>0) {
+					for(j; j <= nodelength; j++)
+					{
+						dojoConstruct.destroy(this.inputNodes.children[i]);
+					}
+				}
+					
 			},
 
 			_createLabelNode: function (key, value) {
@@ -381,8 +400,30 @@ define([
 						console.log(error.description);
 					}
 				}, this);
+			},
+			_checkParentElementsForListview : function(node) {
+			
+				var parentNode = node.parentNode;
+				
+				do {
+					if(dojoClass.contains(parentNode, "mx-listview"))
+					{
+						return true;   
+					}
+					
+					parentNode = parentNode.parentNode;
+				}
+				while(parentNode); 
+				
+				return false;
+			},
+			_reserveSpace : function ()
+			{
+				var i = 0;
+				for (i; i<50; i++) {
+					dojoConstruct.place(dojoConstruct.create("div", {"class" : "radio", innerHTML: "&nbsp;"}),this.inputNodes);
+				}
 			}
-
 		});
 	});
 require(["RadioButtonList/widget/AssocRadioButtonList"], function () {
