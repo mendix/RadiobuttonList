@@ -66,12 +66,13 @@ define([
 					//this.readonly is a widget property
 					this._isReadOnly = true;
 				}
-
-				this._locatedInListview = this._checkParentElementsForListview(this.domNode.parentNode);
 				
-				this._reserveSpace();	
+				if(this.sortAttr === '') {
+					this.sortAttr = this.RadioListItemAttribute;
+				}
 				
-				this._updateRendering();
+				this._reserveSpace();
+			
 			},
 
 			/**
@@ -199,7 +200,7 @@ define([
 						guid: this._contextObj.getGuid(),
 						attr: this.entity,
 						callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
-							this._updateRendering();
+						this._updateRendering();
 						})
 					});
 
@@ -264,8 +265,6 @@ define([
 						labelNode = this._createLabelNode(option, this._radioButtonOptions[option]);
 						radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option]);
 
-						this._addOnclickToRadiobuttonItem(labelNode, radioButtonNode, i);
-
 						dojoConstruct.place(radioButtonNode, labelNode, "first");
 
 						if(this.direction === "horizontal"){
@@ -279,6 +278,10 @@ define([
 							{
 								enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
 							}
+							if(enclosingDivElement.children[0]) {
+								dojoConstruct.destroy(enclosingDivElement.children[0]);
+							}
+							
 							dojoConstruct.place(labelNode, enclosingDivElement, "only");
 							if(!this.inputNodes.children[i]) {
 								dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
@@ -300,7 +303,7 @@ define([
 
 			_createLabelNode: function (key, value) {
 
-				var labelNode = null;
+				var labelNode = null,spanNode = null;
 
 				labelNode = dojoConstruct.create("label");
 
@@ -318,10 +321,10 @@ define([
 					dojoClass.add(labelNode, "radio-inline");
 				}
 
-				dojoConstruct.place(dojoConstruct.create("span", {
+				spanNode = dojoConstruct.place(dojoConstruct.create("span", {
 					"innerHTML": value
 				}), labelNode);
-
+				
 				return labelNode;
 			},
 
@@ -345,11 +348,11 @@ define([
 				if ("" + this._contextObj.get(this.entity) === key) {
 					dojoAttr.set(radiobuttonNode, "defaultChecked", true);
 				}
-
+				this._addOnclickToRadiobuttonItem(radiobuttonNode,key);
 				return radiobuttonNode;
 			},
 
-			_addOnclickToRadiobuttonItem: function (labelNode, radiobuttonNode) {
+			_addOnclickToRadiobuttonItem: function (labelNode, rbvalue) {
 
 				this.connect(labelNode, "onclick", dojoLang.hitch(this, function () {
 
@@ -358,8 +361,8 @@ define([
 						return;
 					}
 
-					dojoAttr.set(radiobuttonNode, "checked", true);
-					this._contextObj.set(this.entity, dojoAttr.get(radiobuttonNode, "value"));
+//					dojoAttr.set(radiobuttonNode, "checked", true);
+					this._contextObj.set(this.entity, rbvalue);
 
 					if (this.onchangeAction) {
 						mx.data.action({
@@ -400,22 +403,6 @@ define([
 						console.log(error.description);
 					}
 				}, this);
-			},
-			_checkParentElementsForListview : function(node) {
-			
-				var parentNode = node.parentNode;
-				
-				do {
-					if(dojoClass.contains(parentNode, "mx-listview"))
-					{
-						return true;   
-					}
-					
-					parentNode = parentNode.parentNode;
-				}
-				while(parentNode); 
-				
-				return false;
 			},
 			_reserveSpace : function ()
 			{
