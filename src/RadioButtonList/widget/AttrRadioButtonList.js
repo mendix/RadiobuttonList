@@ -54,7 +54,7 @@ define([
 				this._isReadOnly = true;
 			}
 			
-			this._updateRendering();
+			this._reserveSpace();
 		},
 
 		// mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
@@ -196,10 +196,15 @@ define([
 
 			var labelNode = null,
 				radioButtonNode = null,
-				i = 0,
+				i = 0, j =0,
+				nodelength = null,
 				enclosingDivElement = null;
 
-			dojoConstruct.empty(this.inputNodes);
+			nodelength = this.inputNodes.children.length;
+			
+			if(this.direction === "horizontal") {
+				dojoConstruct.empty(this.inputNodes);
+			}
 			
 			for (var option in this._radioButtonOptions) {
 				if (this._radioButtonOptions.hasOwnProperty(option)) {
@@ -215,14 +220,35 @@ define([
 						dojoConstruct.place(labelNode, this.inputNodes, "last");
 					} else {
 						//an enclosing div element is required to vertically align a radiobuttonlist in bootstrap. 
-						enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
-						dojoConstruct.place(labelNode, enclosingDivElement, "last");
-						dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+						if(this.inputNodes.children[i])	{
+							enclosingDivElement = this.inputNodes.children[i];
+						}
+						else
+						{
+							enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
+						}
+						if(enclosingDivElement.children[0]) {
+							dojoConstruct.destroy(enclosingDivElement.children[0]);
+						}
+						
+						dojoConstruct.place(labelNode, enclosingDivElement, "only");
+						if(!this.inputNodes.children[i]) {
+							dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+						}
 					}
 					
 					i++;
 				}
 			}
+			
+			j= i;
+			if(j>0) {
+				for(j; j <= nodelength; j++)
+				{
+					dojoConstruct.destroy(this.inputNodes.children[i]);
+				}
+			}
+			
 		},
 
 		_createLabelNode: function (key, value) {
@@ -303,8 +329,16 @@ define([
 					});			
 				}
 			}));
-		}
+		},
+		_reserveSpace : function ()
+		{
+			var i = 0;
+			for (i; i<10; i++) {
+				dojoConstruct.place(dojoConstruct.create("div", {"class" : "radio", innerHTML: "&nbsp;"}),this.inputNodes);
+			}
+	   	}
 	});
+	
 });
 
 require(["RadioButtonList/widget/AttrRadioButtonList"], function () {
