@@ -212,8 +212,6 @@ define([
 					labelNode = this._createLabelNode(option, this._radioButtonOptions[option]);
 					radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option]);
 
-					this._addOnclickToRadiobuttonItem(labelNode, radioButtonNode, i);
-					
 					dojoConstruct.place(radioButtonNode, labelNode, "first");
 					
 					if(this.direction === "horizontal"){
@@ -299,12 +297,14 @@ define([
 				dojoAttr.set(radiobuttonNode, "defaultChecked", true);
 			}
 
+			this._addOnclickToRadiobuttonItem(radiobuttonNode, key);
+			
 			return radiobuttonNode;
 		},
 
-		_addOnclickToRadiobuttonItem: function (labelNode, radiobuttonNode) {
+		_addOnclickToRadiobuttonItem: function (radiobuttonNode, rbvalue) {
 
-			this.connect(labelNode, "onclick", dojoLang.hitch(this, function () {
+			this.connect(radiobuttonNode, "onclick", dojoLang.hitch(this, function () {
 
 				var selectedValue = null;
 				
@@ -314,7 +314,7 @@ define([
 				}
 
 				dojoAttr.set(radiobuttonNode, "checked", true);
-				this._contextObj.set(this.entity, dojoAttr.get(radiobuttonNode, "value"));
+				this._contextObj.set(this.entity, rbvalue);
 				
 				if (this.onchangeAction) {
 					mx.data.action({
