@@ -154,20 +154,20 @@ define([
 
 			// When a mendix object exists create subscribtions. 
 			if (this._contextObj) {
-				validationHandle = mx.data.subscribe({
+				validationHandle = this.subscribe({
 					guid     : this._contextObj.getGuid(),
 					val      : true,
 					callback : dojoLang.hitch(this, this._handleValidation)
 				});
 
-				objectHandle = mx.data.subscribe({
+				objectHandle = this.subscribe({
 					guid     : this._contextObj.getGuid(),
 					callback: dojoLang.hitch(this, function (guid) {
 						this._updateRendering();
 					})
 				});
 
-				attrHandle = mx.data.subscribe({
+				attrHandle = this.subscribe({
 					guid    : this._contextObj.getGuid(),
 					attr    : this.entity,
 					callback: dojoLang.hitch(this, function (guid, attr, attrValue) {

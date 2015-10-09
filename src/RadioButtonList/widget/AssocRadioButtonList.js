@@ -167,15 +167,10 @@ define([
 			},
 
 			// Reset subscriptions.
-			_resetSubscriptions: function () {
-
-				var validationHandle = null,
-					objectHandle = null,
-					attrHandle = null;
-
+			_resetSubscriptions: function() {
 				// Release handles on previous object, if any.
 				if (this._handles) {
-					this._handles.forEach(function (handle) {
+					this._handles.forEach(function(handle) {
 						mx.data.unsubscribe(handle);
 					});
 					this._handles = [];
@@ -183,28 +178,28 @@ define([
 
 				// When a mendix object exists create subscribtions. 
 				if (this._contextObj) {
-					validationHandle = mx.data.subscribe({
+					var objectHandle = this.subscribe({
+						guid: this._contextObj.getGuid(),
+						callback: dojoLang.hitch(this, function(guid) {
+							this._updateRendering();
+						})
+					});
+
+					var attrHandle = this.subscribe({
+						guid: this._contextObj.getGuid(),
+						attr: this.entity,
+						callback: dojoLang.hitch(this, function(guid, attr, attrValue) {
+							this._updateRendering();
+						})
+					});
+
+					var validationHandle = this.subscribe({
 						guid: this._contextObj.getGuid(),
 						val: true,
 						callback: dojoLang.hitch(this, this._handleValidation)
 					});
 
-					objectHandle = mx.data.subscribe({
-						guid: this._contextObj.getGuid(),
-						callback: dojoLang.hitch(this, function (guid) {
-							this._updateRendering();
-						})
-					});
-
-					attrHandle = mx.data.subscribe({
-						guid: this._contextObj.getGuid(),
-						attr: this.entity,
-						callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
-						this._updateRendering();
-						})
-					});
-
-					this.handles = [validationHandle, objectHandle, attrHandle];
+					this._handles = [ objectHandle, attrHandle, validationHandle ];
 				}
 			},
 
