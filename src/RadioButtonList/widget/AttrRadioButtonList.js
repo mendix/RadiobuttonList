@@ -314,6 +314,11 @@ define([
 				}
 
 				dojoAttr.set(radiobuttonNode, "checked", true);
+				
+				if("Boolean" == this._contextObj.getAttributeType(this.entity)){ 
+					rbvalue = rbvalue == "true";
+				}
+				
 				this._contextObj.set(this.entity, rbvalue);
 				
 				if (this.onchangeAction) {
