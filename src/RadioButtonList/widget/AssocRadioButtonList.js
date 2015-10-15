@@ -57,7 +57,7 @@ define([
 
 			// DOJO.WidgetBase -> PostCreate is fired after the properties of the widget are set.
 			postCreate: function () {
-
+                
 				this._assocName = (typeof this.entity !== 'undefined' && this.entity !== '') ? this.entity.split("/")[0] : '';
 				this.entity = this._assocName; //to catch data validation
 
@@ -69,6 +69,32 @@ define([
 				
 				if(this.sortAttr === '') {
 					this.sortAttr = this.RadioListItemAttribute;
+				}
+            
+                // adjust the template based on the display settings.
+				if( this.showLabel ) {
+					if (dojoClass.contains(this.radioButtonLabel, 'hidden')) {
+						dojoClass.remove(this.radioButtonLabel, 'hidden');
+					}
+					
+					if(this.direction === "horizontal"){
+						// width needs to be between 1 and 11
+						var labelWidth = this.labelWidth < 1 ? 1 : this.labelWidth;
+						labelWidth = this.labelWidth > 11 ? 11 : this.labelWidth;
+
+						var controlWidth = 12 - labelWidth,
+							comboLabelClass = 'col-sm-' + labelWidth,
+							comboControlClass = 'hasLabel col-sm-' + controlWidth;
+
+						dojoClass.add(this.radioButtonLabel, comboLabelClass);
+						dojoClass.add(this.inputNodes, comboControlClass);
+					}
+
+					this.radioButtonLabel.innerHTML = this.fieldCaption;
+				} else {
+					if (!dojoClass.contains(this.radioButtonLabel, 'hidden')) {
+						dojoClass.add(this.radioButtonLabel, 'hidden');
+					}
 				}
 				
 				this._reserveSpace();
