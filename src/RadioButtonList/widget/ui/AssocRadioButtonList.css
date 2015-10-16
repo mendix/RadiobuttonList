@@ -12,3 +12,7 @@ margin-right: 30px;
 .radio-inline { 
 	position: relative;
 }
+
+.form-group.hasLabel {
+    margin-left: 0;
+}

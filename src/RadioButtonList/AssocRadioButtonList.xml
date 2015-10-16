@@ -5,8 +5,8 @@
 
   <icon>iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuNUmK/OAAAALQSURBVDhPhZPLT1NBFMZvqQlbjTHyL/AnuJOdkQ079rxilMToSg0GH2B9pmhakD7kUV5FLLUVeqGttVD64NI2UioVsPS2hZZY+0BDKhE+Z6bF6EKd5ORkcuf7fuecOyPhyOLfeZuymR31TjrNSSQS7nRVFXfi5Knmc2fPaABIyBEWZB3Q83+sGae3SaXt37VarYhGoxBFES6XC326kQL51kwMKspBTdgqm5Y2IxOvQcXJZJJlnueRz+fh8/kwZjCDF0TYgwnM+uOY8sVgIftpXxwm9yaGbB/AyRW9jEzFra2tqKurg9lsRi6Xg1LVh/XYNqwLy7B7VvDWE4bZEYAQErG/DxjnN8B1KVWsbEqm4pqaGphMJhQKBXSr+2ENJAgtiknXBqYWYzC7YzDMf4LOGsFLx0dwo69MrGdaNiVTcbFYRCAQhJ608C+6zrIMjg6KDoz2TMumZCrWjU5gxvvxr/QJxxpUkwLYIGfnfC10YLRnWjYl+0Nr/6GHoNC7SwaZdFxaXX0RNGprr5G/BATCMdRffYYbXXoEV2MYtwjQGlzIZPdB6b0GAfIhJzgiajkS/55TnwtoaFNBOWJjhrn8DyyFtrCdKkJnCeHp6AKeDNhKFaSTG4+OxPX1HUwgbn1BY5sa7QoDPEERY9N+LK2kkM0elulzuK/hSwZbYqSCGjQ2PIZ60ssMoskMM7guH4fR9h4PtBY4hRgZMhhdpiX3pnOwZCBGQ9JhnZFtFHonM0ikCmi8qcFzvQO732hFe3AHkgiGM6R3QlfziMfCx5lBdD0oLedKuc6G4vcD2L0RnL/wEJdlQ3AuboJ3rRHRNOzkIjF6xwD29r4eO3ofLK9HBIl80EoMAJtnjdDn8MLghmE2hAGjgGFTAIntQ8gInZyVkkIZ+NfrWg27JVdkgzDa/bjbY8Q9zRQ6e9+gvduIW0ojbveYcIfEpY5+1i4xqPwJSNC6dg/YpdEAAAAASUVORK5CYII=</icon>
 
-  <properties>
-      <property key="dataSourceType" type="enumeration" defaultValue="xpath">
+	<properties>
+		<property key="dataSourceType" type="enumeration" defaultValue="xpath">
 			<caption>Data source type</caption>
 			<category>Data source</category>
 			<description>The method for retrieving the objects.</description>
@@ -20,12 +20,12 @@
 		<category>Data source</category>
 		<description>The entity of which the radiobutton list will be composed. </description> 
 	</property>
-    <property key="datasourceMf" type="microflow" required="false" >
-        <caption>Data source microflow</caption>
-        <category>Data source (Microflow)</category>
-        <description></description>
-        <returnType type="Void"/>
-    </property>
+	<property key="datasourceMf" type="microflow" required="false" >
+		<caption>Data source microflow</caption>
+		<category>Data source (Microflow)</category>
+		<description></description>
+		<returnType type="Void"/>
+	</property>
 	<property key="Constraint" type="entityConstraint" required="false" entityProperty="RadioListObject">
 	  <caption>XPath constraint</caption>
 	  <category>Data source (XPath)</category>
@@ -46,6 +46,16 @@
 		<attributeType name="Long"/>
 		<attributeType name="String"/>
 	  </attributeTypes>
+	</property>
+	<property key="showLabel" type="boolean" defaultValue="true">
+		<caption>Show Label</caption>
+		<category>Display</category>
+		<description>Show a label for the field.</description>
+	</property>
+	<property key="fieldCaption" type="translatableString" required="false" multiline="false">
+		<caption>Label Caption</caption>
+		<category>Display</category>
+		<description>Specify the caption to use for the field</description>
 	</property>
 	<property key="sortOrder" type="enumeration" defaultValue="asc">
 	  <caption>Sort order(XPath)</caption>
@@ -78,6 +88,11 @@
 			<enumerationValue key="vertical">Vertical</enumerationValue>
 		</enumerationValues>
 	</property>
+        <property key="labelWidth" type="integer" defaultValue="4">
+			<caption>Label Width (weight)</caption>
+			<category>Display</category>
+			<description>The column size of the label control (only applied with horizontal orientation)</description>
+		</property>
 		<property key="readonly" type="boolean" required="true" defaultValue="false">
 		  <caption>Read only</caption>
 		  <category>Behavior</category>

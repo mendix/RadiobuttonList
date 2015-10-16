@@ -34,6 +34,16 @@ YII=</icon>
 				<enumerationValue key="vertical">Vertical</enumerationValue>
 			</enumerationValues>
 		</property>
+        <property key="fieldCaption" type="translatableString" required="false" multiline="false">
+            <caption>Label Caption</caption>
+            <category>Display</category>
+            <description>Specify the caption to use for the field</description>
+        </property>
+		<property key="showLabel" type="boolean" defaultValue="true">
+			<caption>Show Label</caption>
+			<category>Display</category>
+			<description>Show a label for the field.</description>
+		</property>
 		<property key="captiontrue" type="translatableString" required="false">
 			<caption>True label (Boolean attribute)</caption>
 			<category>Behavior</category>
@@ -49,6 +59,11 @@ YII=</icon>
 		  <category>Behavior</category>
 		  <description>If true, the widget is not editable.</description> 
 		</property>		
+        <property key="labelWidth" type="integer" defaultValue="4">
+			<caption>Label Width (weight)</caption>
+			<category>Display</category>
+			<description>The column size of the label control (only applied with horizontal orientation)</description>
+		</property>
 		<property key="onchangeAction" type="microflow" required="false">
 			<caption>On change</caption>
 			<category>Events</category>
