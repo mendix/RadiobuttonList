@@ -25,9 +25,18 @@ YII=</icon>
 			<attributeType name="Boolean"/>
 		  </attributeTypes>
 		</property>
+	  	<property key="formOrientation" type="enumeration" defaultValue="horizontal">
+		  <caption>Form orientation</caption>
+		  <category>Display</category>
+		  <description>The orientation of the label and checkbox items</description>
+		  <enumerationValues>
+			  <enumerationValue key="horizontal">Horizontal</enumerationValue>
+			  <enumerationValue key="vertical">Vertical</enumerationValue>
+		  </enumerationValues>
+	  	</property>
 		<property key="direction" type="enumeration" defaultValue="vertical">
 			<caption>Direction</caption>
-			<category>Behavior</category>
+			<category>Display</category>
 			<description>This field determines the display direction of the radiobutton options.</description> 
 			<enumerationValues>
 				<enumerationValue key="horizontal">Horizontal</enumerationValue>
@@ -39,24 +48,24 @@ YII=</icon>
             <category>Display</category>
             <description>Specify the caption to use for the field</description>
         </property>
-		<property key="showLabel" type="boolean" defaultValue="true">
+		<property key="showLabel" type="boolean" defaultValue="false">
 			<caption>Show Label</caption>
 			<category>Display</category>
 			<description>Show a label for the field.</description>
 		</property>
 		<property key="captiontrue" type="translatableString" required="false">
 			<caption>True label (Boolean attribute)</caption>
-			<category>Behavior</category>
+			<category>Display</category>
 			<description>In the case of the target attribute being a boolean, the text for the label can be defined here.</description>
 		</property>
 		<property key="captionfalse" type="translatableString" required="false">
 			<caption>False label (Boolean attribute)</caption>
-			<category>Behavior</category>
+			<category>Display</category>
 			<description>In the case of the target attribute being a boolean, the text for the label can be defined here.</description>
 		</property>
 		<property key="readonly" type="boolean" required="true" defaultValue="false">
 		  <caption>Read only</caption>
-		  <category>Behavior</category>
+		  <category>Display</category>
 		  <description>If true, the widget is not editable.</description> 
 		</property>		
         <property key="labelWidth" type="integer" defaultValue="4">

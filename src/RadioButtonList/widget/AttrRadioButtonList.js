@@ -12,10 +12,11 @@ define([
 		"dojo/dom-style",
 		"dojo/dom-construct",
 		"dojo/dom-attr",
+		"dojo/_base/array",
 		"dojo/_base/lang",
 		"dojo/html",
 	"dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
-	], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoLang, dojoHtml, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, dojoLang, dojoHtml, widgetTemplate) {
 	"use strict";
 
 	// Declare widget's prototype.
@@ -33,6 +34,7 @@ define([
 		captionfalse: "",
 		readonly: false,
 		onchangeAction: "",
+		formOrientation: null,
 
 		// Internal variables. Non-primitives created in the prototype are shared between all widget instances.
 		_handles: null,
@@ -60,7 +62,7 @@ define([
                     dojoClass.remove(this.radioButtonLabel, 'hidden');
                 }
 
-                if(this.direction === "horizontal"){
+                if(this.formOrientation === "horizontal"){
                     // width needs to be between 1 and 11
                     var labelWidth = this.labelWidth < 1 ? 1 : this.labelWidth;
                     labelWidth = this.labelWidth > 11 ? 11 : this.labelWidth;
@@ -157,7 +159,7 @@ define([
 				"class": "alert alert-danger",
 				"innerHTML": message
 			});
-			dojoConstruct.place(this._alertDiv, this.domNode);
+			dojoConstruct.place(this._alertDiv, this.inputNodes);
 		},
 
 		// Add a validation.
@@ -172,7 +174,7 @@ define([
 			
 			// Release handles on previous object, if any.
 			if (this._handles) {
-				this._handles.forEach(function (handle) {
+				dojoArray.forEach(this._handles, function (handle, i) {
 					mx.data.unsubscribe(handle);
 				});
 				this._handles = [];
