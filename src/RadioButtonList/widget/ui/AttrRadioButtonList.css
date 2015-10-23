@@ -1,18 +1,23 @@
-.RadioButtonList input[type="radio"], 
+.RadioButtonList input[type="radio"],
 .RadioButtonList input[type="checkbox"] {
-	margin: 0;
-	margin-left: -20px;
-	margin-top: 3px;
+    margin: 0;
+    margin-left: -20px;
+    margin-top: 3px;
 }
 
 .RadioButtonList span {
-        display: block;
-        margin-right: 30px;
+    display: block;
+    margin-right: 30px;
 }
-.radio-inline { 
-	position: relative;
+.radio-inline {
+    position: relative;
 }
 
 .form-group.hasLabel {
     margin-left: 0;
+}
+
+.radioButtonLabel {
+    font-weight: normal;
+    color: #666664
 }
