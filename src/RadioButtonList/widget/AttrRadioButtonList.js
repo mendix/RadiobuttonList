@@ -49,7 +49,6 @@ define([
 
 		// dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
 		postCreate: function () {
-			console.debug(this.id + ".postCreate");
 
 			if (this.readOnly || this.get('disabled') || this.readonly) {
 				//this.readOnly isn't available in client API, this.get('disabled') works correctly since 5.18.
@@ -87,7 +86,6 @@ define([
 
 		// mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
 		update: function (obj, callback) {
-			console.debug(this.id + ".update");
 
 			this._contextObj = obj;
 			this._resetSubscriptions();
@@ -355,6 +353,9 @@ define([
 							applyto     : "selection",
 							actionname  : this.onchangeAction,
 							guids       : [this._contextObj.getGuid()]
+						},
+						store: {
+							caller: this.mxform
 						},
 						error           : function(error) {
 							console.log("RadioButtonList.widget.AttrRadioButtonList._addOnclickToRadiobuttonItem: XAS error executing microflow; " + error.description);

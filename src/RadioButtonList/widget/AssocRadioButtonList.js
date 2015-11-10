@@ -108,7 +108,6 @@ define([
 			 */
 
 			update: function (obj, callback) {
-				console.debug(this.id + ".update");
 
 				this._contextObj = obj;
 				this._resetSubscriptions();
@@ -384,7 +383,6 @@ define([
 						return;
 					}
 
-//					dojoAttr.set(radiobuttonNode, "checked", true);
 					this._contextObj.set(this.entity, rbvalue);
 
 					if (this.onchangeAction) {
@@ -393,6 +391,9 @@ define([
 								applyto: "selection",
 								actionname: this.onchangeAction,
 								guids: [this._contextObj.getGuid()]
+							},
+							store: {
+								caller: this.mxform
 							},
 							error: function (error) {
 								console.log("RadioButtonList.widget.AttrRadioButtonList._addOnclickToRadiobuttonItem: XAS error executing microflow; " + error.description);
