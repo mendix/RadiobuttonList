@@ -1,6 +1,3 @@
-/*jslint white:true, nomen: true, plusplus: true */
-/*global mx, define, require, browser, devel, console, document, jQuery, mxui, dojo */
-/*mendix */
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
@@ -50,23 +47,13 @@ define([
             _locatedInListview: false,
             _setup: false,
 
-            /**
-             * Mendix Widget methods.
-             * ======================
-             */
             constructor: function () {
-                //logger.level(logger.DEBUG);
                 this._handles = [];
             },
 
-            // DOJO.WidgetBase -> PostCreate is fired after the properties of the widget are set.
             postCreate: function () {
                 logger.debug(this.id + ".postCreate");
             },
-
-            /**
-             * What to do when data is loaded?
-             */
 
             update: function (obj, callback) {
                 logger.debug(this.id + ".update");
@@ -76,10 +63,10 @@ define([
 
                 if (!this._setup) {
                     this._setupWidget(lang.hitch(this, function () {
-                        this._setRadiobuttonOptions(this._setRadiobuttonOptions(callback));
+                        this._setRadiobuttonOptions(callback);
                     }));
                 } else {
-                    this._setRadiobuttonOptions(this._setRadiobuttonOptions(callback));
+                    this._setRadiobuttonOptions(callback);
                 }
             },
 
@@ -124,7 +111,6 @@ define([
                     }
                 }
 
-                this._reserveSpace();
                 this._setup = true;
 
                 mendix.lang.nullExec(callback);
@@ -147,7 +133,6 @@ define([
                 }
             },
 
-            // Rerender the interface.
             _updateRendering: function (callback) {
                 logger.debug(this.id + "._updateRendering");
                 if (this._contextObj !== null) {
@@ -164,7 +149,6 @@ define([
                 this._clearValidations();
             },
 
-            // Handle validations.
             _handleValidation: function (validations) {
                 logger.debug(this.id + "._handleValidation");
                 this._clearValidations();
@@ -181,14 +165,12 @@ define([
                 }
             },
 
-            // Clear validations.
             _clearValidations: function () {
                 logger.debug(this.id + "._clearValidations");
                 dojoConstruct.destroy(this._alertDiv);
                 this._alertDiv = null;
             },
 
-            // Show an error message.
             _showError: function (message) {
                 logger.debug(this.id + "._showError");
                 if (this._alertDiv !== null) {
@@ -202,13 +184,11 @@ define([
                 dojoConstruct.place(this._alertDiv, this.inputNodes);
             },
 
-            // Add a validation.
             _addValidation: function (message) {
                 logger.debug(this.id + "._addValidation");
                 this._showError(message);
             },
 
-            // Reset subscriptions.
             _resetSubscriptions: function() {
                 logger.debug(this.id + "._resetSubscriptions");
                 // Release handles on previous object, if any.
@@ -288,7 +268,6 @@ define([
                 }
                 this._updateRendering(callback);
             },
-
 
             _createRadiobuttonNodes: function (callback) {
                 logger.debug(this.id + "._createRadiobuttonNode");
@@ -459,14 +438,6 @@ define([
                         console.error(error.description);
                     }
                 }, this);
-            },
-
-            _reserveSpace : function () {
-                logger.debug(this.id + "._reserveSpace");
-                var i = 0;
-                for (i; i<50; i++) {
-                    dojoConstruct.place(dojoConstruct.create("div", {"class" : "radio", innerHTML: "&nbsp;"}),this.inputNodes);
-                }
             }
         });
     });

@@ -1,8 +1,3 @@
-/*jslint white:true, nomen: true, plusplus: true */
-/*global mx, define, require, browser, devel, console, document, jQuery, mxui */
-/*mendix */
-
-// Required module list. Remove unnecessary modules, you can always get them back from the boilerplate.
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
@@ -16,12 +11,12 @@ define([
     "dojo/_base/lang",
     "dojo/html",
     "dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, dojoLang, dojoHtml, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
     "use strict";
 
     // Declare widget's prototype.
     return declare("RadioButtonList.widget.AttrRadioButtonList", [_WidgetBase, _TemplatedMixin], {
-        // _TemplatedMixin will create our dom node using this HTML template.
+
         templateString: widgetTemplate,
 
         // DOM elements
@@ -41,15 +36,34 @@ define([
         _contextObj: null,
         _alertDiv: null,
         _radioButtonOptions: null,
+        _setup: false,
 
-        // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function () {
             this._handles = [];
         },
 
-        // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function () {
             logger.debug(this.id + ".postCreate");
+        },
+
+        update: function (obj, callback) {
+            logger.debug(this.id + ".update");
+            this._contextObj = obj;
+            this._resetSubscriptions();
+            this._setRadiobuttonOptions();
+
+            if (!this._setup) {
+                this._setupWidget(lang.hitch(this, function () {
+                    this._updateRendering(callback);
+                }));
+            } else {
+                this._updateRendering(callback);
+            }
+        },
+
+        _setupWidget: function (callback) {
+            logger.debug(this.id + "._setupWidget");
+
             if (this.readOnly || this.get("disabled") || this.readonly) {
                 //this.readOnly isn"t available in client API, this.get("disabled") works correctly since 5.18.
                 this._isReadOnly = true;
@@ -81,51 +95,37 @@ define([
                 }
             }
 
-            this._reserveSpace();
+            this._setup = true;
+
+            mendix.lang.nullExec(callback);
         },
 
-        // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
-        update: function (obj, callback) {
-            logger.debug(this.id + ".update");
-            this._contextObj = obj;
-            this._resetSubscriptions();
-            this._setRadiobuttonOptions();
-            this._updateRendering();
-
-            callback();
-        },
-
-        // mxui.widget._WidgetBase.enable is called when the widget should enable editing. Implement to enable editing if widget is input widget.
-        enable: function () {},
-
-        // mxui.widget._WidgetBase.enable is called when the widget should disable editing. Implement to disable editing if widget is input widget.
-        disable: function () {},
-
-        // mxui.widget._WidgetBase.resize is called when the page"s layout is recalculated. Implement to do sizing calculations. Prefer using CSS instead.
         resize: function (box) {},
 
-        // mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
         uninitialize: function () {
-            // Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
+            if (this._handles) {
+                dojoArray.forEach(this._handles, function (handle, i) {
+                    mx.data.unsubscribe(handle);
+                });
+                this._handles = [];
+            }
         },
 
-        // Rerender the interface.
-        _updateRendering: function () {
+        _updateRendering: function (callback) {
             logger.debug(this.id + "._updateRendering");
+
             if (this._contextObj !== null) {
                 dojoStyle.set(this.domNode, "display", "block");
-
-                this._createRadiobuttonNodes();
-
+                this._createRadiobuttonNodes(callback);
             } else {
                 dojoStyle.set(this.domNode, "display", "none");
+                mendix.lang.nullExec(callback);
             }
 
             // Important to clear all validations!
             this._clearValidations();
         },
 
-        // Handle validations.
         _handleValidation: function (validations) {
             logger.debug(this.id + "._handleValidation");
             this._clearValidations();
@@ -142,14 +142,12 @@ define([
             }
         },
 
-        // Clear validations.
         _clearValidations: function () {
             logger.debug(this.id + "._clearValidations");
             dojoConstruct.destroy(this._alertDiv);
             this._alertDiv = null;
         },
 
-        // Show an error message.
         _showError: function (message) {
             logger.debug(this.id + "._showError");
             if (this._alertDiv !== null) {
@@ -163,13 +161,11 @@ define([
             dojoConstruct.place(this._alertDiv, this.inputNodes);
         },
 
-        // Add a validation.
         _addValidation: function (message) {
             logger.debug(this.id + "._addValidation");
             this._showError(message);
         },
 
-        // Reset subscriptions.
         _resetSubscriptions: function () {
             logger.debug(this.id + "._resetSubscriptions");
             var validationHandle = null, objectHandle = null, attrHandle = null;
@@ -187,12 +183,12 @@ define([
                 validationHandle = this.subscribe({
                     guid     : this._contextObj.getGuid(),
                     val      : true,
-                    callback : dojoLang.hitch(this, this._handleValidation)
+                    callback : lang.hitch(this, this._handleValidation)
                 });
 
                 objectHandle = this.subscribe({
                     guid     : this._contextObj.getGuid(),
-                    callback: dojoLang.hitch(this, function (guid) {
+                    callback: lang.hitch(this, function (guid) {
                         this._updateRendering();
                     })
                 });
@@ -200,7 +196,7 @@ define([
                 attrHandle = this.subscribe({
                     guid    : this._contextObj.getGuid(),
                     attr    : this.entity,
-                    callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
+                    callback: lang.hitch(this, function (guid, attr, attrValue) {
                         this._updateRendering();
                     })
                 });
@@ -223,11 +219,11 @@ define([
             }
         },
 
-        _createRadiobuttonNodes: function () {
+        _createRadiobuttonNodes: function (callback) {
             logger.debug(this.id + "._createRadiobuttonNode");
             var labelNode = null,
                 radioButtonNode = null,
-                i = 0, j =0,
+                i = 0,
                 nodelength = null,
                 enclosingDivElement = null;
 
@@ -270,14 +266,7 @@ define([
                 }
             }
 
-            j= i;
-            if (j>0) {
-                for(j; j <= nodelength; j++)
-                {
-                    dojoConstruct.destroy(this.inputNodes.children[i]);
-                }
-            }
-
+            mendix.lang.nullExec(callback);
         },
 
         _createLabelNode: function (key, value) {
@@ -336,7 +325,7 @@ define([
 
         _addOnclickToRadiobuttonItem: function (radiobuttonNode, rbvalue) {
             logger.debug(this.id + "._addOnclickToRadiobuttonItem");
-            this.connect(radiobuttonNode, "onclick", dojoLang.hitch(this, function () {
+            this.connect(radiobuttonNode, "onclick", lang.hitch(this, function () {
 
                 var selectedValue = null;
 
@@ -355,27 +344,20 @@ define([
 
                 if (this.onchangeAction) {
                     mx.data.action({
-                        params          : {
-                            applyto     : "selection",
-                            actionname  : this.onchangeAction,
-                            guids       : [this._contextObj.getGuid()]
+                        params: {
+                            applyto: "selection",
+                            actionname: this.onchangeAction,
+                            guids: [this._contextObj.getGuid()]
                         },
                         store: {
                             caller: this.mxform
                         },
-                        error           : function(error) {
-                            console.error("RadioButtonList.widget.AttrRadioButtonList._addOnclickToRadiobuttonItem: XAS error executing microflow; " + error.description);
-                        }
-                    });
+                        error: lang.hitch(this, function (error) {
+                            console.error(this.id + ": XAS error executing microflow; " + error.description);
+                        })
+                    }, this);
                 }
             }));
-        },
-
-        _reserveSpace : function () {
-            logger.debug(this.id + "._reserveSpace");
-            for (var i = 0; i<10; i++) {
-                dojoConstruct.place(dojoConstruct.create("div", {"class" : "radio", innerHTML: "&nbsp;"}),this.inputNodes);
-            }
         }
     });
 });
