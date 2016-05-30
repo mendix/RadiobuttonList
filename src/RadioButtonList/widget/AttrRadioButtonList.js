@@ -6,12 +6,13 @@ define([
     "dojo/dom-class",
     "dojo/dom-style",
     "dojo/dom-construct",
+    "dijit/focus",
     "dojo/dom-attr",
     "dojo/_base/array",
     "dojo/_base/lang",
     "dojo/html",
     "dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, focusUtil, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
     "use strict";
 
     // Declare widget's prototype.
@@ -37,6 +38,7 @@ define([
         _alertDiv: null,
         _radioButtonOptions: null,
         _setup: false,
+        _rbValue: null,
 
         constructor: function () {
             this._handles = [];
@@ -325,6 +327,16 @@ define([
 
         _addOnclickToRadiobuttonItem: function (radiobuttonNode, rbvalue) {
             logger.debug(this.id + "._addOnclickToRadiobuttonItem");
+
+            if (this._rbValue === rbvalue) {
+                logger.debug(this.id + "._addOnclickToRadiobuttonItem set focus on item: " + rbvalue);
+                setTimeout(function () {
+                    focusUtil.focus(radiobuttonNode);
+                }, 500);
+
+                this._rbValue = null;
+            }
+
             this.connect(radiobuttonNode, "onclick", lang.hitch(this, function () {
 
                 var selectedValue = null;
@@ -357,6 +369,14 @@ define([
                         })
                     }, this);
                 }
+            }));
+
+            this.connect(radiobuttonNode, "onfocus", lang.hitch(this, function () {
+                this._rbValue = rbvalue;
+            }));
+
+            this.connect(radiobuttonNode, "onblur", lang.hitch(this, function () {
+                this._rbValue = null;
             }));
         }
     });
