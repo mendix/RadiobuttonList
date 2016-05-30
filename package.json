@@ -1,12 +1,11 @@
 {
   "name": "RadioButtonList",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "",
   "license": "Apache Version 2.0",
   "author": "Mendix",
   "private": true,
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "grunt": "1.0.1",
     "grunt-contrib-clean": "^1.0.0",
