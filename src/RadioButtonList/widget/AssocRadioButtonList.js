@@ -1,3 +1,4 @@
+/*global logger, mx, mendix*/
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
@@ -35,6 +36,7 @@ define([
             direction: "vertical",
             readonly: false,
             onchangeAction: "",
+            allowDeselect: false,
             formOrientation: null,
 
             // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
@@ -390,8 +392,12 @@ define([
                         this._contextObj.isReadonlyAttr(this.entity)) {
                         return;
                     }
-
-                    this._contextObj.set(this.entity, rbvalue);
+                    if (this.allowDeselect && this._contextObj.get(this.entity) === rbvalue) {
+                        this._contextObj.set(this.entity, null);
+                        dojoAttr.set(labelNode, "checked", false);
+                    } else {
+                        this._contextObj.set(this.entity, rbvalue);
+                    }
 
                     if (this.onchangeAction) {
                         mx.data.action({

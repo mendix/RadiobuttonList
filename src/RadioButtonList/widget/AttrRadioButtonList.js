@@ -1,3 +1,4 @@
+/*global logger, mx, mendix*/
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
@@ -29,6 +30,7 @@ define([
         captionfalse: "",
         readonly: false,
         onchangeAction: "",
+        allowDeselect: false,
         formOrientation: null,
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
@@ -327,20 +329,22 @@ define([
             logger.debug(this.id + "._addOnclickToRadiobuttonItem");
             this.connect(radiobuttonNode, "onclick", lang.hitch(this, function () {
 
-                var selectedValue = null;
-
                 if (this._isReadOnly ||
                     this._contextObj.isReadonlyAttr(this.entity)) {
                     return;
                 }
-
-                dojoAttr.set(radiobuttonNode, "checked", true);
-
+                
                 if("Boolean" === this._contextObj.getAttributeType(this.entity)){
                     rbvalue = rbvalue === "true";
                 }
-
-                this._contextObj.set(this.entity, rbvalue);
+                
+                if (this.allowDeselect && this._contextObj.get(this.entity) === rbvalue) {
+                    dojoAttr.set(radiobuttonNode, "checked", false);
+                    this._contextObj.set(this.entity, null);                    
+                } else {
+                    dojoAttr.set(radiobuttonNode, "checked", true);
+                    this._contextObj.set(this.entity, rbvalue);
+                }
 
                 if (this.onchangeAction) {
                     mx.data.action({

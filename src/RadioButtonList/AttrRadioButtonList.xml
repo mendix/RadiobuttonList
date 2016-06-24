@@ -79,6 +79,11 @@ YII=</icon>
 			<description></description>
 			<returnType type="Void"></returnType>
 		</property>
+                <property key="allowDeselect" type="boolean" required="true" defaultValue="false">
+                    <caption>Allow Deselect</caption>
+                    <category>Events</category>
+                    <description>Deselecting by clicking on the selected item</description> 
+                </property>
 	</properties>
 </widget>
 
