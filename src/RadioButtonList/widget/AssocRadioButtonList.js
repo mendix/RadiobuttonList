@@ -393,7 +393,7 @@ define([
                         return;
                     }
                     if (this.allowDeselect && this._contextObj.get(this.entity) === rbvalue) {
-                        this._contextObj.set(this.entity, null);
+                        this._contextObj.set(this.entity, "");
                         dojoAttr.set(labelNode, "checked", false);
                     } else {
                         this._contextObj.set(this.entity, rbvalue);
