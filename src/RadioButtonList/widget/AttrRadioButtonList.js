@@ -341,7 +341,7 @@ define([
 
                 if (this.allowDeselect && this._contextObj.get(this.entity) === rbvalue) {
                     dojoAttr.set(radiobuttonNode, "checked", false);
-                    this._contextObj.set(this.entity, null);
+                    this._contextObj.set(this.entity, "");
                 } else {
                     dojoAttr.set(radiobuttonNode, "checked", true);
                     this._contextObj.set(this.entity, rbvalue);
