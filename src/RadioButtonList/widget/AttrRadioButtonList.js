@@ -1,3 +1,5 @@
+/*jslint browser: true, devel:true, nomen:true, unparam:true, regexp: true, plusplus:true*/
+/*global require, define, logger, mx, mendix*/
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
@@ -29,6 +31,7 @@ define([
         captionfalse: "",
         readonly: false,
         onchangeAction: "",
+        allowDeselect: false,
         formOrientation: null,
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
@@ -70,12 +73,12 @@ define([
             }
 
             // adjust the template based on the display settings.
-            if( this.showLabel ) {
+            if (this.showLabel) {
                 if (dojoClass.contains(this.radioButtonLabel, "hidden")) {
                     dojoClass.remove(this.radioButtonLabel, "hidden");
                 }
 
-                if(this.formOrientation === "horizontal"){
+                if (this.formOrientation === "horizontal") {
                     // width needs to be between 1 and 11
                     var labelWidth = this.labelWidth < 1 ? 1 : this.labelWidth;
                     labelWidth = this.labelWidth > 11 ? 11 : this.labelWidth;
@@ -134,7 +137,7 @@ define([
                 message = validation.getReasonByAttribute(this.entity);
 
             if (this._isReadOnly ||
-                this._contextObj.isReadonlyAttr(this.entity)) {
+                    this._contextObj.isReadonlyAttr(this.entity)) {
                 validation.removeAttribute(this.entity);
             } else if (message) {
                 this._addValidation(message);
@@ -209,9 +212,9 @@ define([
             logger.debug(this.id + "._setRadiobuttonOptions");
             if (this.entity !== "" && this._contextObj) {
                 //get enumeration for current attribute
-                if(this._contextObj.getAttributeType(this.entity) === "Enum") {
+                if (this._contextObj.getAttributeType(this.entity) === "Enum") {
                     this._radioButtonOptions = this._contextObj.getEnumKVPairs(this.entity);
-                } else if(this._contextObj.getAttributeType(this.entity) === "Boolean") {
+                } else if (this._contextObj.getAttributeType(this.entity) === "Boolean") {
                     this._radioButtonOptions = {};
                     this._radioButtonOptions["true"] = this.captiontrue;
                     this._radioButtonOptions["false"] = this.captionfalse;
@@ -229,7 +232,7 @@ define([
 
             nodelength = this.inputNodes.children.length;
 
-            if(this.direction === "horizontal") {
+            if (this.direction === "horizontal") {
                 dojoConstruct.empty(this.inputNodes);
             }
 
@@ -276,7 +279,7 @@ define([
             labelNode = dojoConstruct.create("label");
 
             if (this._isReadOnly ||
-                this._contextObj.isReadonlyAttr(this.entity)) {
+                    this._contextObj.isReadonlyAttr(this.entity)) {
                 dojoAttr.set(labelNode, "disabled", "disabled");
                 dojoAttr.set(labelNode, "readonly", "readonly");
             }
@@ -291,7 +294,7 @@ define([
 
             dojoConstruct.place(dojoConstruct.create("span", {
                 "innerHTML": value
-            }), labelNode );
+            }), labelNode);
 
             return labelNode;
         },
@@ -309,7 +312,7 @@ define([
             dojoAttr.set(radiobuttonNode, "name", "radio" + this._contextObj.getGuid() + "_" + this.id);
 
             if (this._isReadOnly ||
-                this._contextObj.isReadonlyAttr(this.entity)) {
+                    this._contextObj.isReadonlyAttr(this.entity)) {
                 dojoAttr.set(radiobuttonNode, "disabled", "disabled");
                 dojoAttr.set(radiobuttonNode, "readonly", "readonly");
             }
@@ -327,20 +330,22 @@ define([
             logger.debug(this.id + "._addOnclickToRadiobuttonItem");
             this.connect(radiobuttonNode, "onclick", lang.hitch(this, function () {
 
-                var selectedValue = null;
-
                 if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
+                        this._contextObj.isReadonlyAttr(this.entity)) {
                     return;
                 }
 
-                dojoAttr.set(radiobuttonNode, "checked", true);
-
-                if("Boolean" === this._contextObj.getAttributeType(this.entity)){
+                if ("Boolean" === this._contextObj.getAttributeType(this.entity)) {
                     rbvalue = rbvalue === "true";
                 }
 
-                this._contextObj.set(this.entity, rbvalue);
+                if (this.allowDeselect && this._contextObj.get(this.entity) === rbvalue) {
+                    dojoAttr.set(radiobuttonNode, "checked", false);
+                    this._contextObj.set(this.entity, "");
+                } else {
+                    dojoAttr.set(radiobuttonNode, "checked", true);
+                    this._contextObj.set(this.entity, rbvalue);
+                }
 
                 if (this.onchangeAction) {
                     mx.data.action({
@@ -362,6 +367,4 @@ define([
     });
 });
 
-require(["RadioButtonList/widget/AttrRadioButtonList"], function () {
-    "use strict";
-});
+require(["RadioButtonList/widget/AttrRadioButtonList"]);

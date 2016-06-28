@@ -1,3 +1,5 @@
+/*jslint browser: true, devel:true, nomen:true, unparam:true, regexp: true, plusplus:true*/
+/*global require, define, logger, mx, mendix*/
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
@@ -35,6 +37,7 @@ define([
             direction: "vertical",
             readonly: false,
             onchangeAction: "",
+            allowDeselect: false,
             formOrientation: null,
 
             // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
@@ -81,17 +84,17 @@ define([
                     this._isReadOnly = true;
                 }
 
-                if(this.sortAttr === "") {
+                if (this.sortAttr === "") {
                     this.sortAttr = this.RadioListItemAttribute;
                 }
 
                 // adjust the template based on the display settings.
-                if( this.showLabel ) {
+                if (this.showLabel) {
                     if (dojoClass.contains(this.radioButtonLabel, "hidden")) {
                         dojoClass.remove(this.radioButtonLabel, "hidden");
                     }
 
-                    if(this.formOrientation === "horizontal"){
+                    if (this.formOrientation === "horizontal") {
                         // width needs to be between 1 and 11
                         var labelWidth = this.labelWidth < 1 ? 1 : this.labelWidth;
                         labelWidth = this.labelWidth > 11 ? 11 : this.labelWidth;
@@ -128,7 +131,7 @@ define([
                         this._showError("Can\"t retrieve objects because no datasource microflow is specified");
                         mendix.lang.nullExec(callback);
                     }
-                }  else {
+                } else {
                     this._updateRendering(callback);
                 }
             },
@@ -139,7 +142,7 @@ define([
                     dojoStyle.set(this.domNode, "display", "block");
                     this._createRadiobuttonNodes(callback);
                 } else {
-                    if(!this._locatedInListview) {
+                    if (!this._locatedInListview) {
                         dojoStyle.set(this.domNode, "display", "none");
                     }
                     mendix.lang.nullExec(callback);
@@ -157,7 +160,7 @@ define([
                     message = validation.getReasonByAttribute(this.entity);
 
                 if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
+                        this._contextObj.isReadonlyAttr(this.entity)) {
                     validation.removeAttribute(this.entity);
                 } else if (message) {
                     this._addValidation(message);
@@ -189,7 +192,7 @@ define([
                 this._showError(message);
             },
 
-            _resetSubscriptions: function() {
+            _resetSubscriptions: function () {
                 logger.debug(this.id + "._resetSubscriptions");
                 // Release handles on previous object, if any.
                 if (this._handles) {
@@ -203,7 +206,7 @@ define([
                 if (this._contextObj) {
                     var objectHandle = this.subscribe({
                         guid: this._contextObj.getGuid(),
-                        callback: lang.hitch(this, function(guid) {
+                        callback: lang.hitch(this, function (guid) {
                             this._updateRendering();
                         })
                     });
@@ -211,7 +214,7 @@ define([
                     var attrHandle = this.subscribe({
                         guid: this._contextObj.getGuid(),
                         attr: this.entity,
-                        callback: lang.hitch(this, function(guid, attr, attrValue) {
+                        callback: lang.hitch(this, function (guid, attr, attrValue) {
                             this._updateRendering();
                         })
                     });
@@ -282,7 +285,7 @@ define([
 
                 nodelength = this.inputNodes.children.length;
 
-                if(this.direction === "horizontal") {
+                if (this.direction === "horizontal") {
                     dojoConstruct.empty(this.inputNodes);
                 }
 
@@ -331,12 +334,12 @@ define([
 
             _createLabelNode: function (key, value) {
                 logger.debug(this.id + "._createLabelNode");
-                var labelNode = null,spanNode = null;
+                var labelNode = null, spanNode = null;
 
                 labelNode = dojoConstruct.create("label");
 
                 if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
+                        this._contextObj.isReadonlyAttr(this.entity)) {
                     dojoAttr.set(labelNode, "disabled", "disabled");
                     dojoAttr.set(labelNode, "readonly", "readonly");
                 }
@@ -369,7 +372,7 @@ define([
                 dojoAttr.set(radiobuttonNode, "name", "radio" + this._contextObj.getGuid() + "_" + this.id);
 
                 if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
+                        this._contextObj.isReadonlyAttr(this.entity)) {
                     dojoAttr.set(radiobuttonNode, "disabled", "disabled");
                     dojoAttr.set(radiobuttonNode, "readonly", "readonly");
                 }
@@ -377,7 +380,7 @@ define([
                 if ("" + this._contextObj.get(this.entity) === key) {
                     dojoAttr.set(radiobuttonNode, "defaultChecked", true);
                 }
-                this._addOnclickToRadiobuttonItem(radiobuttonNode,key);
+                this._addOnclickToRadiobuttonItem(radiobuttonNode, key);
                 return radiobuttonNode;
             },
 
@@ -387,11 +390,15 @@ define([
                 this.connect(labelNode, "onclick", lang.hitch(this, function () {
 
                     if (this._isReadOnly ||
-                        this._contextObj.isReadonlyAttr(this.entity)) {
+                            this._contextObj.isReadonlyAttr(this.entity)) {
                         return;
                     }
-
-                    this._contextObj.set(this.entity, rbvalue);
+                    if (this.allowDeselect && this._contextObj.get(this.entity) === rbvalue) {
+                        this._contextObj.set(this.entity, "");
+                        dojoAttr.set(labelNode, "checked", false);
+                    } else {
+                        this._contextObj.set(this.entity, rbvalue);
+                    }
 
                     if (this.onchangeAction) {
                         mx.data.action({
@@ -442,6 +449,4 @@ define([
         });
     });
 
-require(["RadioButtonList/widget/AssocRadioButtonList"], function () {
-    "use strict";
-});
+require(["RadioButtonList/widget/AssocRadioButtonList"]);
