@@ -1,20 +1,20 @@
 /*jslint browser: true, devel:true, nomen:true, unparam:true, regexp: true, plusplus:true*/
 /*global require, define, logger, mx, mendix*/
 define([
-    "dojo/_base/declare",
-    "mxui/widget/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "mxui/dom",
-    "dojo/dom-class",
-    "dojo/dom-style",
-    "dojo/dom-construct",
-    "dojo/dom-attr",
-    "dojo/_base/array",
-    "dojo/_base/lang",
-    "dojo/html",
-    "dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
-],
-    function (declare, _WidgetBase, _TemplatedMixin, dom, dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
+        "dojo/_base/declare",
+        "mxui/widget/_WidgetBase",
+        "dijit/_TemplatedMixin",
+        "mxui/dom",
+        "dojo/dom-class",
+        "dojo/dom-style",
+        "dojo/dom-construct",
+        "dojo/dom-attr",
+        "dojo/_base/array",
+        "dojo/_base/lang",
+        "dojo/html",
+        "dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
+    ],
+    function(declare, _WidgetBase, _TemplatedMixin, dom, dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
         "use strict";
 
         // Declare widget.
@@ -50,22 +50,22 @@ define([
             _locatedInListview: false,
             _setup: false,
 
-            constructor: function () {
+            constructor: function() {
                 this._handles = [];
             },
 
-            postCreate: function () {
+            postCreate: function() {
                 logger.debug(this.id + ".postCreate");
             },
 
-            update: function (obj, callback) {
+            update: function(obj, callback) {
                 logger.debug(this.id + ".update");
 
                 this._contextObj = obj;
                 this._resetSubscriptions();
 
                 if (!this._setup) {
-                    this._setupWidget(lang.hitch(this, function () {
+                    this._setupWidget(lang.hitch(this, function() {
                         this._setRadiobuttonOptions(callback);
                     }));
                 } else {
@@ -73,7 +73,7 @@ define([
                 }
             },
 
-            _setupWidget: function (callback) {
+            _setupWidget: function(callback) {
                 logger.debug(this.id + "._setupWidget");
                 this._assocName = (typeof this.entity !== "undefined" && this.entity !== "") ? this.entity.split("/")[0] : "";
                 this.entity = this._assocName; //to catch data validation
@@ -119,7 +119,7 @@ define([
                 mendix.lang.nullExec(callback);
             },
 
-            _setRadiobuttonOptions: function (callback) {
+            _setRadiobuttonOptions: function(callback) {
                 logger.debug(this.id + "._setRadiobuttonOptions");
 
                 if (this._contextObj) {
@@ -136,7 +136,7 @@ define([
                 }
             },
 
-            _updateRendering: function (callback) {
+            _updateRendering: function(callback) {
                 logger.debug(this.id + "._updateRendering");
                 if (this._contextObj !== null) {
                     dojoStyle.set(this.domNode, "display", "block");
@@ -152,15 +152,14 @@ define([
                 this._clearValidations();
             },
 
-            _handleValidation: function (validations) {
+            _handleValidation: function(validations) {
                 logger.debug(this.id + "._handleValidation");
                 this._clearValidations();
 
                 var validation = validations[0],
                     message = validation.getReasonByAttribute(this.entity);
 
-                if (this._isReadOnly ||
-                        this._contextObj.isReadonlyAttr(this.entity)) {
+                if (this._isReadOnly || this._contextObj.isReadonlyAttr(this.entity)) {
                     validation.removeAttribute(this.entity);
                 } else if (message) {
                     this._addValidation(message);
@@ -168,13 +167,13 @@ define([
                 }
             },
 
-            _clearValidations: function () {
+            _clearValidations: function() {
                 logger.debug(this.id + "._clearValidations");
                 dojoConstruct.destroy(this._alertDiv);
                 this._alertDiv = null;
             },
 
-            _showError: function (message) {
+            _showError: function(message) {
                 logger.debug(this.id + "._showError");
                 if (this._alertDiv !== null) {
                     dojoHtml.set(this._alertDiv, message);
@@ -187,16 +186,16 @@ define([
                 dojoConstruct.place(this._alertDiv, this.inputNodes);
             },
 
-            _addValidation: function (message) {
+            _addValidation: function(message) {
                 logger.debug(this.id + "._addValidation");
                 this._showError(message);
             },
 
-            _resetSubscriptions: function () {
+            _resetSubscriptions: function() {
                 logger.debug(this.id + "._resetSubscriptions");
                 // Release handles on previous object, if any.
                 if (this._handles) {
-                    dojoArray.forEach(this._handles, function (handle, i) {
+                    dojoArray.forEach(this._handles, function(handle, i) {
                         mx.data.unsubscribe(handle);
                     });
                     this._handles = [];
@@ -206,7 +205,7 @@ define([
                 if (this._contextObj) {
                     var objectHandle = this.subscribe({
                         guid: this._contextObj.getGuid(),
-                        callback: lang.hitch(this, function (guid) {
+                        callback: lang.hitch(this, function(guid) {
                             this._updateRendering();
                         })
                     });
@@ -214,7 +213,7 @@ define([
                     var attrHandle = this.subscribe({
                         guid: this._contextObj.getGuid(),
                         attr: this.entity,
-                        callback: lang.hitch(this, function (guid, attr, attrValue) {
+                        callback: lang.hitch(this, function(guid, attr, attrValue) {
                             this._updateRendering();
                         })
                     });
@@ -225,11 +224,11 @@ define([
                         callback: lang.hitch(this, this._handleValidation)
                     });
 
-                    this._handles = [ objectHandle, attrHandle, validationHandle ];
+                    this._handles = [objectHandle, attrHandle, validationHandle];
                 }
             },
 
-            _getDataFromXPath: function (callback) {
+            _getDataFromXPath: function(callback) {
                 logger.debug(this.id + "._getDataFromXPath");
                 if (this._contextObj) {
                     mx.data.get({
@@ -237,12 +236,14 @@ define([
                         filter: {
                             limit: 50,
                             depth: 0,
-                            sort: [[this.sortAttr, this.sortOrder]]
+                            sort: [
+                                [this.sortAttr, this.sortOrder]
+                            ]
                         },
-                        callback: lang.hitch(this, function (objs) {
+                        callback: lang.hitch(this, function(objs) {
                             this._populateRadiobuttonOptions(objs, callback);
                         }),
-                        error: lang.hitch(this, function (err) {
+                        error: lang.hitch(this, function(err) {
                             console.error(err);
                             mendix.lang.nullExec(callback);
                         })
@@ -252,14 +253,14 @@ define([
                 }
             },
 
-            _getDataFromDatasource: function (callback) {
+            _getDataFromDatasource: function(callback) {
                 logger.debug(this.id + "._getDataFromDatasource");
-                this._execMF(this._contextObj, this.datasourceMf, lang.hitch(this, function (objs) {
+                this._execMF(this._contextObj, this.datasourceMf, lang.hitch(this, function(objs) {
                     this._populateRadiobuttonOptions(objs, callback);
                 }));
             },
 
-            _populateRadiobuttonOptions: function (objs, callback) {
+            _populateRadiobuttonOptions: function(objs, callback) {
                 logger.debug(this.id + "._populateRadiobuttonOptions");
                 var mxObj = null,
                     i = 0;
@@ -272,7 +273,7 @@ define([
                 this._updateRendering(callback);
             },
 
-            _createRadiobuttonNodes: function (callback) {
+            _createRadiobuttonNodes: function(callback) {
                 logger.debug(this.id + "._createRadiobuttonNode");
 
                 var mxObj = null,
@@ -297,23 +298,23 @@ define([
 
                         dojoConstruct.place(radioButtonNode, labelNode, "first");
 
-                        if(this.direction === "horizontal"){
+                        if (this.direction === "horizontal") {
                             dojoConstruct.place(labelNode, this.inputNodes, "last");
                         } else {
                             //an enclosing div element is required to vertically align a radiobuttonlist in bootstrap.
-                            if(this.inputNodes.children[i])    {
+                            if (this.inputNodes.children[i]) {
                                 enclosingDivElement = this.inputNodes.children[i];
+                            } else {
+                                enclosingDivElement = dojoConstruct.create("div", {
+                                    "class": "radio"
+                                });
                             }
-                            else
-                            {
-                                enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
-                            }
-                            if(enclosingDivElement.children[0]) {
+                            if (enclosingDivElement.children[0]) {
                                 dojoConstruct.destroy(enclosingDivElement.children[0]);
                             }
 
                             dojoConstruct.place(labelNode, enclosingDivElement, "only");
-                            if(!this.inputNodes.children[i]) {
+                            if (!this.inputNodes.children[i]) {
                                 dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
                             }
                         }
@@ -321,10 +322,9 @@ define([
                         i++;
                     }
                 }
-                j= i;
-                if (j>0) {
-                    for(j; j <= nodelength; j++)
-                    {
+                j = i;
+                if (j > 0) {
+                    for (j; j <= nodelength; j++) {
                         dojoConstruct.destroy(this.inputNodes.children[i]);
                     }
                 }
@@ -332,14 +332,15 @@ define([
                 mendix.lang.nullExec(callback);
             },
 
-            _createLabelNode: function (key, value) {
+            _createLabelNode: function(key, value) {
                 logger.debug(this.id + "._createLabelNode");
-                var labelNode = null, spanNode = null;
+                var labelNode = null,
+                    spanNode = null;
 
                 labelNode = dojoConstruct.create("label");
 
                 if (this._isReadOnly ||
-                        this._contextObj.isReadonlyAttr(this.entity)) {
+                    this._contextObj.isReadonlyAttr(this.entity)) {
                     dojoAttr.set(labelNode, "disabled", "disabled");
                     dojoAttr.set(labelNode, "readonly", "readonly");
                 }
@@ -359,7 +360,7 @@ define([
                 return labelNode;
             },
 
-            _createRadiobuttonNode: function (key, value, index) {
+            _createRadiobuttonNode: function(key, value, index) {
                 logger.debug(this.id + "._createRadiobuttonNode");
                 var radiobuttonNode = null;
 
@@ -372,7 +373,7 @@ define([
                 dojoAttr.set(radiobuttonNode, "name", "radio" + this._contextObj.getGuid() + "_" + this.id);
 
                 if (this._isReadOnly ||
-                        this._contextObj.isReadonlyAttr(this.entity)) {
+                    this._contextObj.isReadonlyAttr(this.entity)) {
                     dojoAttr.set(radiobuttonNode, "disabled", "disabled");
                     dojoAttr.set(radiobuttonNode, "readonly", "readonly");
                 }
@@ -384,13 +385,13 @@ define([
                 return radiobuttonNode;
             },
 
-            _addOnclickToRadiobuttonItem: function (labelNode, rbvalue) {
+            _addOnclickToRadiobuttonItem: function(labelNode, rbvalue) {
                 logger.debug(this.id + "._addOnclickToRadiobuttonItem");
 
-                this.connect(labelNode, "onclick", lang.hitch(this, function () {
+                this.connect(labelNode, "onclick", lang.hitch(this, function() {
 
                     if (this._isReadOnly ||
-                            this._contextObj.isReadonlyAttr(this.entity)) {
+                        this._contextObj.isReadonlyAttr(this.entity)) {
                         return;
                     }
                     if (this.allowDeselect && this._contextObj.get(this.entity) === rbvalue) {
@@ -399,6 +400,8 @@ define([
                     } else {
                         this._contextObj.set(this.entity, rbvalue);
                     }
+
+                    this._clearValidations();
 
                     if (this.onchangeAction) {
                         mx.data.action({
@@ -410,7 +413,7 @@ define([
                             store: {
                                 caller: this.mxform
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 console.error("RadioButtonList.widget.AttrRadioButtonList._addOnclickToRadiobuttonItem: XAS error executing microflow; " + error.description);
                             }
                         });
@@ -418,7 +421,7 @@ define([
                 }));
             },
 
-            _execMF: function (obj, mf, callback) {
+            _execMF: function(obj, mf, callback) {
                 logger.debug(this.id + "._execMF");
                 var params = {
                     applyto: "selection",
@@ -433,12 +436,12 @@ define([
                     store: {
                         caller: this.mxform
                     },
-                    callback: function (objs) {
+                    callback: function(objs) {
                         if (typeof callback !== "undefined") {
                             callback(objs);
                         }
                     },
-                    error: function (error) {
+                    error: function(error) {
                         if (typeof callback !== "undefined") {
                             callback();
                         }
