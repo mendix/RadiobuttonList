@@ -1,12 +1,11 @@
 {
   "name": "RadioButtonList",
-  "version": "6.4.0",
+  "version": "6.4.1",
   "description": "",
   "license": "Apache Version 2.0",
   "author": "Mendix",
   "private": true,
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "del": "^2.2.2",
     "gulp": "^3.9.1",
@@ -25,7 +24,7 @@
   },
   "generatorVersion": "2.0.4",
   "paths": {
-    "testProjectFolder": "C:\\Projects\\ISSUES\\ticket47049-radiobuttonlist\\",
+    "testProjectFolder": "./test/",
     "testProjectFileName": "Test.mpr"
   },
   "scripts": {
