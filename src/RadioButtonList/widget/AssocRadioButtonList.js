@@ -39,6 +39,7 @@ define([
             onchangeAction: "",
             allowDeselect: false,
             formOrientation: null,
+            hasErrorCompat: false,
 
             // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
             _handles: null,
@@ -171,6 +172,10 @@ define([
                 logger.debug(this.id + "._clearValidations");
                 dojoConstruct.destroy(this._alertDiv);
                 this._alertDiv = null;
+
+                if (this.hasErrorCompat) {
+                    dojoClass.remove(this.domNode, "has-error");
+                }
             },
 
             _showError: function(message) {
@@ -184,6 +189,10 @@ define([
                     "innerHTML": message
                 });
                 dojoConstruct.place(this._alertDiv, this.inputNodes);
+
+                if (this.hasErrorCompat) {
+                    dojoClass.add(this.domNode, "has-error");
+                }
             },
 
             _addValidation: function(message) {

@@ -107,6 +107,10 @@
 			<category>Display</category>
 			<description>If true, the widget is not editable.</description>
 		</property>
+        <property key="hasErrorCompat" type="boolean" required="true" defaultValue="false">
+          <caption>Has Error compatibility</caption>
+          <category>Display</category>
+          <description>If true, the .has-error class is applied when an error occurs as with default Mendix widgets</description>
 		<property key="onchangeAction" type="microflow" required="false">
 			<caption>On change</caption>
 			<category>Events</category>
@@ -116,7 +120,7 @@
                 <property key="allowDeselect" type="boolean" required="true" defaultValue="false">
                     <caption>Allow Deselect</caption>
                     <category>Events</category>
-                    <description>Deselecting by clicking on the selected item</description> 
-                </property>	
+                    <description>Deselecting by clicking on the selected item</description>
+                </property>
 	</properties>
 </widget>

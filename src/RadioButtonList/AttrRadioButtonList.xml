@@ -19,9 +19,9 @@ YII=</icon>
 		<property key="entity" type="attribute" required="true">
 		  <caption>Target attribute</caption>
 		  <category>Data source</category>
-		  <description>The attribute which has to be rendered as a radiobutton list.</description> 
+		  <description>The attribute which has to be rendered as a radiobutton list.</description>
 		  <attributeTypes>
-			<attributeType name="Enum"/> 
+			<attributeType name="Enum"/>
 			<attributeType name="Boolean"/>
 		  </attributeTypes>
 		</property>
@@ -37,7 +37,7 @@ YII=</icon>
 		<property key="direction" type="enumeration" defaultValue="vertical">
 			<caption>Direction</caption>
 			<category>Display</category>
-			<description>This field determines the display direction of the radiobutton options.</description> 
+			<description>This field determines the display direction of the radiobutton options.</description>
 			<enumerationValues>
 				<enumerationValue key="horizontal">Horizontal</enumerationValue>
 				<enumerationValue key="vertical">Vertical</enumerationValue>
@@ -66,13 +66,17 @@ YII=</icon>
 		<property key="readonly" type="boolean" required="true" defaultValue="false">
 		  <caption>Read only</caption>
 		  <category>Display</category>
-		  <description>If true, the widget is not editable.</description> 
-		</property>		
+		  <description>If true, the widget is not editable.</description>
+		</property>
         <property key="labelWidth" type="integer" defaultValue="4">
 			<caption>Label Width (weight)</caption>
 			<category>Display</category>
 			<description>The column size of the label control (only applied with horizontal orientation)</description>
 		</property>
+        <property key="hasErrorCompat" type="boolean" required="true" defaultValue="false">
+          <caption>Has Error compatibility</caption>
+          <category>Display</category>
+          <description>If true, the .has-error class is applied when an error occurs as with default Mendix widgets</description>
 		<property key="onchangeAction" type="microflow" required="false">
 			<caption>On change</caption>
 			<category>Events</category>
@@ -82,7 +86,7 @@ YII=</icon>
                 <property key="allowDeselect" type="boolean" required="true" defaultValue="false">
                     <caption>Allow Deselect</caption>
                     <category>Events</category>
-                    <description>Deselecting by clicking on the selected item</description> 
+                    <description>Deselecting by clicking on the selected item</description>
                 </property>
 	</properties>
 </widget>
