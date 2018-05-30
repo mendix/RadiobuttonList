@@ -13,7 +13,7 @@ define([
     "dojo/_base/lang",
     "dojo/html",
     "dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom,  dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
     "use strict";
 
     // Declare widget's prototype.
@@ -100,7 +100,7 @@ define([
 
             this._setup = true;
 
-            mendix.lang.nullExec(callback);
+            this._executeCallback(callback, "_setupWidget");
         },
 
         resize: function (box) {},
@@ -122,7 +122,7 @@ define([
                 this._createRadiobuttonNodes(callback);
             } else {
                 dojoStyle.set(this.domNode, "display", "none");
-                mendix.lang.nullExec(callback);
+                this._executeCallback(callback, " _updateRendering no contextObj");
             }
 
             // Important to clear all validations!
@@ -137,7 +137,7 @@ define([
                 message = validation.getReasonByAttribute(this.entity);
 
             if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
+                this._contextObj.isReadonlyAttr(this.entity)) {
                 validation.removeAttribute(this.entity);
             } else if (message) {
                 this._addValidation(message);
@@ -171,40 +171,35 @@ define([
 
         _resetSubscriptions: function () {
             logger.debug(this.id + "._resetSubscriptions");
-            var validationHandle = null, objectHandle = null, attrHandle = null;
+            var validationHandle = null,
+                objectHandle = null,
+                attrHandle = null;
 
             // Release handles on previous object, if any.
-            if (this._handles) {
-                dojoArray.forEach(this._handles, function (handle, i) {
-                    mx.data.unsubscribe(handle);
-                });
-                this._handles = [];
-            }
+            this.unsubscribeAll();
 
             // When a mendix object exists create subscribtions.
             if (this._contextObj) {
-                validationHandle = this.subscribe({
-                    guid     : this._contextObj.getGuid(),
-                    val      : true,
-                    callback : lang.hitch(this, this._handleValidation)
+                this.subscribe({
+                    guid: this._contextObj.getGuid(),
+                    val: true,
+                    callback: lang.hitch(this, this._handleValidation)
                 });
 
-                objectHandle = this.subscribe({
-                    guid     : this._contextObj.getGuid(),
+                this.subscribe({
+                    guid: this._contextObj.getGuid(),
                     callback: lang.hitch(this, function (guid) {
                         this._updateRendering();
                     })
                 });
 
-                attrHandle = this.subscribe({
-                    guid    : this._contextObj.getGuid(),
-                    attr    : this.entity,
+                this.subscribe({
+                    guid: this._contextObj.getGuid(),
+                    attr: this.entity,
                     callback: lang.hitch(this, function (guid, attr, attrValue) {
                         this._updateRendering();
                     })
                 });
-
-                this.handles = [validationHandle, objectHandle, attrHandle];
             }
         },
 
@@ -230,7 +225,7 @@ define([
                 nodelength = null,
                 enclosingDivElement = null;
 
-            nodelength = this.inputNodes.children.length;
+            nodelength = this.inputNodes.children ? this.inputNodes.children.length : 0;
 
             if (this.direction === "horizontal") {
                 dojoConstruct.empty(this.inputNodes);
@@ -244,23 +239,23 @@ define([
 
                     dojoConstruct.place(radioButtonNode, labelNode, "first");
 
-                    if(this.direction === "horizontal"){
+                    if (this.direction === "horizontal") {
                         dojoConstruct.place(labelNode, this.inputNodes, "last");
                     } else {
                         //an enclosing div element is required to vertically align a radiobuttonlist in bootstrap.
-                        if(this.inputNodes.children[i])    {
+                        if (this.inputNodes.children && this.inputNodes.children[i]) {
                             enclosingDivElement = this.inputNodes.children[i];
+                        } else {
+                            enclosingDivElement = dojoConstruct.create("div", {
+                                "class": "radio"
+                            });
                         }
-                        else
-                        {
-                            enclosingDivElement = dojoConstruct.create("div", {"class" : "radio"});
-                        }
-                        if(enclosingDivElement.children[0]) {
+                        if (enclosingDivElement.children[0]) {
                             dojoConstruct.destroy(enclosingDivElement.children[0]);
                         }
 
                         dojoConstruct.place(labelNode, enclosingDivElement, "only");
-                        if(!this.inputNodes.children[i]) {
+                        if (!this.inputNodes.children[i]) {
                             dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
                         }
                     }
@@ -269,7 +264,7 @@ define([
                 }
             }
 
-            mendix.lang.nullExec(callback);
+            this._executeCallback(callback, "_createRadiobuttonNodes");
         },
 
         _createLabelNode: function (key, value) {
@@ -279,7 +274,7 @@ define([
             labelNode = dojoConstruct.create("label");
 
             if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
+                this._contextObj.isReadonlyAttr(this.entity)) {
                 dojoAttr.set(labelNode, "disabled", "disabled");
                 dojoAttr.set(labelNode, "readonly", "readonly");
             }
@@ -288,7 +283,7 @@ define([
                 dojoClass.add(labelNode, "checked");
             }
 
-            if(this.direction === "horizontal"){
+            if (this.direction === "horizontal") {
                 dojoClass.add(labelNode, "radio-inline");
             }
 
@@ -312,7 +307,7 @@ define([
             dojoAttr.set(radiobuttonNode, "name", "radio" + this._contextObj.getGuid() + "_" + this.id);
 
             if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
+                this._contextObj.isReadonlyAttr(this.entity)) {
                 dojoAttr.set(radiobuttonNode, "disabled", "disabled");
                 dojoAttr.set(radiobuttonNode, "readonly", "readonly");
             }
@@ -331,7 +326,7 @@ define([
             this.connect(radiobuttonNode, "onclick", lang.hitch(this, function () {
 
                 if (this._isReadOnly ||
-                        this._contextObj.isReadonlyAttr(this.entity)) {
+                    this._contextObj.isReadonlyAttr(this.entity)) {
                     return;
                 }
 
@@ -348,21 +343,35 @@ define([
                 }
 
                 if (this.onchangeAction) {
-                    mx.data.action({
+                    var action = {
                         params: {
                             applyto: "selection",
                             actionname: this.onchangeAction,
                             guids: [this._contextObj.getGuid()]
                         },
-                        store: {
-                            caller: this.mxform
-                        },
                         error: lang.hitch(this, function (error) {
                             console.error(this.id + ": XAS error executing microflow; " + error.description);
                         })
-                    }, this);
+                    };
+
+                    if (!mx.version || !!mx.version && 7 > parseInt(mx.version.split(".")[ 0 ], 10)) {
+                        action.store = {
+                            caller: this.mxform,
+                        };
+                    } else {
+                        action.origin = this.mxform;
+                    }
+
+                    mx.data.action(action, this);
                 }
             }));
+        },
+
+        _executeCallback: function (cb, from) {
+            logger.debug(this.id + "._executeCallback " + (typeof cb) + (from ? " from " + from : ""));
+            if (cb && typeof cb === "function") {
+                cb();
+            }
         }
     });
 });
