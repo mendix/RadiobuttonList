@@ -201,7 +201,7 @@ define([
                     this.subscribe({
                         guid: this._contextObj.getGuid(),
                         callback: lang.hitch(this, function (guid) {
-                            this._updateRendering();
+                            this._setRadiobuttonOptions();
                         })
                     });
 
@@ -209,7 +209,7 @@ define([
                         guid: this._contextObj.getGuid(),
                         attr: this.entity,
                         callback: lang.hitch(this, function (guid, attr, attrValue) {
-                            this._updateRendering();
+                            this._setRadiobuttonOptions();
                         })
                     });
 
@@ -259,15 +259,18 @@ define([
                     i = 0;
 
                 this._radioButtonOptions = {};
-                for (i = 0; i < objs.length; i++) {
-                    mxObj = objs[i];
-                    this._radioButtonOptions[mxObj.getGuid()] = mxObj.get(this.RadioListItemAttribute);
+                if (objs && objs.length) {
+                    for (i = 0; i < objs.length; i++) {
+                        mxObj = objs[i];
+                        this._radioButtonOptions[mxObj.getGuid()] = mxObj.get(this.RadioListItemAttribute);
+                    }
                 }
+
                 this._updateRendering(callback);
             },
 
             _createRadiobuttonNodes: function (callback) {
-                logger.debug(this.id + "._createRadiobuttonNode");
+                logger.debug(this.id + "._createRadiobuttonNodes");
 
                 var mxObj = null,
                     i = 0,
@@ -277,9 +280,9 @@ define([
                     enclosingDivElement = null,
                     nodelength = this.inputNodes.children ? this.inputNodes.children.length : 0;
 
-                if (this.direction === "horizontal") {
+                // if (this.direction === "horizontal") {
                     dojoConstruct.empty(this.inputNodes);
-                }
+                // }
 
                 for (var option in this._radioButtonOptions) {
                     if (this._radioButtonOptions.hasOwnProperty(option)) {
