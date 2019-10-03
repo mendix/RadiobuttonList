@@ -278,42 +278,48 @@ define([
                     labelNode = null,
                     radioButtonNode = null,
                     enclosingDivElement = null,
-                    nodelength = this.inputNodes.children ? this.inputNodes.children.length : 0;
+                    nodelength = 0;
 
-                // if (this.direction === "horizontal") {
+                if(this.inputNodes !== null){
+                    if(this.inputNodes.children !== null){
+                        nodelength = this.inputNodes.children.length;
+                    }
+
                     dojoConstruct.empty(this.inputNodes);
-                // }
 
-                for (var option in this._radioButtonOptions) {
-                    if (this._radioButtonOptions.hasOwnProperty(option)) {
+                    for (var option in this._radioButtonOptions) {
+                        if (this._radioButtonOptions.hasOwnProperty(option)) {
+                            labelNode = this._createLabelNode(option, this._radioButtonOptions[option]);
+                            radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option]);
 
-                        labelNode = this._createLabelNode(option, this._radioButtonOptions[option]);
-                        radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option]);
+                            dojoConstruct.place(radioButtonNode, labelNode, "first");
 
-                        dojoConstruct.place(radioButtonNode, labelNode, "first");
-
-                        if (this.direction === "horizontal") {
-                            dojoConstruct.place(labelNode, this.inputNodes, "last");
-                        } else {
-                            //an enclosing div element is required to vertically align a radiobuttonlist in bootstrap.
-                            if (this.inputNodes.children && this.inputNodes.children[i]) {
-                                enclosingDivElement = this.inputNodes.children[i];
+                            if (this.direction === "horizontal") {
+                                dojoConstruct.place(labelNode, this.inputNodes, "last");
                             } else {
-                                enclosingDivElement = dojoConstruct.create("div", {
-                                    "class": "radio"
-                                });
-                            }
-                            if (enclosingDivElement.children[0]) {
-                                dojoConstruct.destroy(enclosingDivElement.children[0]);
+                            //an enclosing div element is required to vertically align a radiobuttonlist in bootstrap.
+
+                                if (this.inputNodes.children && this.inputNodes.children[i]) {
+                                    enclosingDivElement = this.inputNodes.children[i];
+                                } else {
+                                    enclosingDivElement = dojoConstruct.create("div", {
+                                        "class": "radio"
+                                    });
+                                }
+
+                                if (enclosingDivElement.children[0]) {
+                                    dojoConstruct.destroy(enclosingDivElement.children[0]);
+                                }
+
+                                dojoConstruct.place(labelNode, enclosingDivElement, "only");
+
+                                if (!this.inputNodes.children[i]) {
+                                    dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+                                }
                             }
 
-                            dojoConstruct.place(labelNode, enclosingDivElement, "only");
-                            if (!this.inputNodes.children[i]) {
-                                dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
-                            }
+                            i++;
                         }
-
-                        i++;
                     }
                 }
                 j = i;
