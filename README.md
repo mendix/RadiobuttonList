@@ -14,7 +14,7 @@ For more information on contributing to this repository visit [Contributing to a
 Visualize all possible options in your user interface, instead of forcing your user to open a dropdownlist to view all available options.
 
 ## Features and limitations
- 
+
 - Displaying the list in a horizontal or vertical direction.
 - Specify text of the labels in case of a boolean attribute
 - Attaching a microflow on the onchange event.
@@ -49,11 +49,11 @@ Import the widget to your project and add either Radiobutton List or Radiobutton
 ###### Target source
 
 * *Attribute* - Attribute of type enumeration or boolean of which the values will be rendered as a radiobutton list.
- 
+
 
 ##### Radiobutton list Advanced (based on an association)
 
-###### Data source 
+###### Data source
 
 * *Entity to list* - Entity containing the attribute which should be rendered as a radiobutton list
 * *Label* - (String) Attribute of which it's contents will be used as label
@@ -70,7 +70,7 @@ Import the widget to your project and add either Radiobutton List or Radiobutton
 
 * *Data source microflow* - Microflow returning a list of objects
 
-###Example
+### Example
 
 Example for radiobutton list based on an association:
 There are two entities defined, namely 'CompanyDepartment' and 'Employee'.
@@ -82,7 +82,7 @@ Entity to list: CompanyDepartment
 Label: Name (String attribute of  CompanyDepartment)
 Association: Employee_CompanyDeparment/CompanyDepartment.
 
-###Known bugs
+### Known bugs
 
 Onchange has no effect on the form. Workaround: add a microflow to the onchange property of the widget.This microflow must contain a change activity. The change activity must have 'refresh in a client' enabled.
 
