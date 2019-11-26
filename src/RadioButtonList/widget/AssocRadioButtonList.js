@@ -100,11 +100,17 @@ define([
                         labelWidth = this.labelWidth > 11 ? 11 : this.labelWidth;
 
                         var controlWidth = 12 - labelWidth,
-                            comboLabelClass = "col-sm-" + labelWidth,
-                            comboControlClass = "hasLabel col-sm-" + controlWidth;
+                            comboLabelClass = "col-sm-" + labelWidth;
 
                         dojoClass.add(this.radioButtonLabel, comboLabelClass);
-                        dojoClass.add(this.inputNodes, comboControlClass);
+
+                        var radioContainer = dojoConstruct.place(dojoConstruct.create("div", {
+                            "class": "col-sm-" + controlWidth
+                        }), this.radioButtonContainer, "last");
+
+                        dojoConstruct.place(this.inputNodes, radioContainer, "only");
+                    } else {
+                        dojoClass.add(this.radioButtonContainer, "no-columns");
                     }
 
                     this.radioButtonLabel.innerHTML = this.fieldCaption;
@@ -112,6 +118,11 @@ define([
                     if (!dojoClass.contains(this.radioButtonLabel, "hidden")) {
                         dojoClass.add(this.radioButtonLabel, "hidden");
                     }
+                    dojoClass.add(this.radioButtonContainer, "no-columns");
+                }
+
+                if (this.direction === "horizontal") {
+                    dojoClass.add(this.radioButtonContainer, "inline");
                 }
 
                 this._setup = true;
@@ -289,37 +300,32 @@ define([
 
                     for (var option in this._radioButtonOptions) {
                         if (this._radioButtonOptions.hasOwnProperty(option)) {
-                            labelNode = this._createLabelNode(option, this._radioButtonOptions[option]);
-                            radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option]);
+                            labelNode = this._createLabelNode(option, this._radioButtonOptions[option], i);
+                            radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option], i);
 
-                            dojoConstruct.place(radioButtonNode, labelNode, "first");
+                            //dojoConstruct.place(radioButtonNode, labelNode, "first");
 
-                            if (this.direction === "horizontal") {
-                                dojoConstruct.place(labelNode, this.inputNodes, "last");
+                            if (this.inputNodes.children && this.inputNodes.children[i]) {
+                                enclosingDivElement = this.inputNodes.children[i];
                             } else {
-                            //an enclosing div element is required to vertically align a radiobuttonlist in bootstrap.
-
-                                if (this.inputNodes.children && this.inputNodes.children[i]) {
-                                    enclosingDivElement = this.inputNodes.children[i];
-                                } else {
-                                    enclosingDivElement = dojoConstruct.create("div", {
-                                        "class": "radio"
-                                    });
-                                }
-
-                                if (enclosingDivElement.children[0]) {
-                                    dojoConstruct.destroy(enclosingDivElement.children[0]);
-                                }
-
-                                dojoConstruct.place(labelNode, enclosingDivElement, "only");
-
-                                if (!this.inputNodes.children[i]) {
-                                    dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
-                                }
+                                enclosingDivElement = dojoConstruct.create("div", {
+                                    "class": "radio"
+                                });
                             }
 
-                            i++;
+                            if (enclosingDivElement.children[0]) {
+                                dojoConstruct.destroy(enclosingDivElement.children[0]);
+                            }
+
+                            dojoConstruct.place(radioButtonNode, enclosingDivElement, "first");
+                            dojoConstruct.place(labelNode, enclosingDivElement, "last");
+
+                            if (!this.inputNodes.children[i]) {
+                                dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+                            }
                         }
+
+                        i++;
                     }
                 }
                 j = i;
@@ -332,30 +338,12 @@ define([
                 this._executeCallback(callback, "_createRadiobuttonNodes");
             },
 
-            _createLabelNode: function (key, value) {
+            _createLabelNode: function (key, value, index) {
                 logger.debug(this.id + "._createLabelNode");
-                var labelNode = null,
-                    spanNode = null;
-
-                labelNode = dojoConstruct.create("label");
-
-                if (this._isReadOnly ||
-                    this._contextObj.isReadonlyAttr(this.entity)) {
-                    dojoAttr.set(labelNode, "disabled", "disabled");
-                    dojoAttr.set(labelNode, "readonly", "readonly");
-                }
-
-                if ("" + this._contextObj.get(this.entity) === key) {
-                    dojoClass.add(labelNode, "checked");
-                }
-
-                if (this.direction === "horizontal") {
-                    dojoClass.add(labelNode, "radio-inline");
-                }
-
-                spanNode = dojoConstruct.place(dojoConstruct.create("span", {
+                var labelNode = dojoConstruct.create("label", {
+                    "for": this.entity + "_" + this.id + "_" + index,
                     "innerHTML": value
-                }), labelNode);
+                });
 
                 return labelNode;
             },
