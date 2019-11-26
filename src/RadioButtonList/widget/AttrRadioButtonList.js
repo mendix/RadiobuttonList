@@ -249,8 +249,6 @@ define([
                         labelNode = this._createLabelNode(option, this._radioButtonOptions[option], i);
                         radioButtonNode = this._createRadiobuttonNode(option, this._radioButtonOptions[option], i);
 
-                        // dojoConstruct.place(radioButtonNode, labelNode, "first");
-
                         //an enclosing div element is required to vertically align a radiobuttonlist in bootstrap.
                         if (this.inputNodes.children && this.inputNodes.children[i]) {
                             enclosingDivElement = this.inputNodes.children[i];
