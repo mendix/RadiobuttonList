@@ -168,17 +168,16 @@ define([
                 logger.debug(this.id + "._handleValidation");
                 this._clearValidations();
 
-                var attribute = this.entity.split("/")[0];
-                if (this._isReadOnly || this._contextObj.isReadonlyAttr(attribute)) {
+                if (this._isReadOnly || this._contextObj.isReadonlyAttr(this.entity)) {
                     return;
                 }
 
                 var validation = validations[0],
-                    message = validation.getReasonByAttribute(attribute);
+                    message = validation.getReasonByAttribute(this.entity);
 
                 this._addValidation(message);
 
-                validation.removeAttribute(attribute);
+                validation.removeAttribute(this.entity);
             },
 
             _clearValidations: function () {
@@ -224,10 +223,9 @@ define([
                         })
                     });
 
-                    var attr = this.entity.split("/")[0];
                     this.subscribe({
                         guid: this._contextObj.getGuid(),
-                        attr: attr,
+                        attr: this.entity,
                         callback: lang.hitch(this, function (guid, attr, attrValue) {
                             this._setRadiobuttonOptions();
                         })
