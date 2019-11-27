@@ -40,6 +40,7 @@ define([
         _alertDiv: null,
         _radioButtonOptions: null,
         _setup: false,
+        _radioContainer: null,
 
         constructor: function () {
             this._handles = [];
@@ -88,11 +89,11 @@ define([
 
                     dojoClass.add(this.radioButtonLabel, comboLabelClass);
 
-                    var radioContainer = dojoConstruct.place(dojoConstruct.create("div", {
+                    this._radioContainer = dojoConstruct.place(dojoConstruct.create("div", {
                         "class": "col-sm-" + controlWidth
                     }), this.radioButtonContainer, "last");
 
-                    dojoConstruct.place(this.inputNodes, radioContainer, "only");
+                    dojoConstruct.place(this.inputNodes, this._radioContainer, "only");
                 } else {
                     dojoClass.add(this.radioButtonContainer, "no-columns");
                 }
@@ -102,6 +103,7 @@ define([
                 if (!dojoClass.contains(this.radioButtonLabel, "hidden")) {
                     dojoClass.add(this.radioButtonLabel, "hidden");
                 }
+                dojoClass.add(this.radioButtonContainer, "no-columns");
             }
 
             if (this.direction === "horizontal") {
@@ -128,7 +130,7 @@ define([
             logger.debug(this.id + "._updateRendering");
 
             if (this._contextObj !== null) {
-                dojoStyle.set(this.domNode, "display", "block");
+                dojoStyle.set(this.domNode, "display", "");
                 this._createRadiobuttonNodes(callback);
             } else {
                 dojoStyle.set(this.domNode, "display", "none");
@@ -146,19 +148,19 @@ define([
             var validation = validations[0],
                 message = validation.getReasonByAttribute(this.entity);
 
-            if (this._isReadOnly ||
-                this._contextObj.isReadonlyAttr(this.entity)) {
-                validation.removeAttribute(this.entity);
-            } else if (message) {
-                this._addValidation(message);
-                validation.removeAttribute(this.entity);
+            if (this._isReadOnly || this._contextObj.isReadonlyAttr(this.entity)) {
+                return;
             }
+
+            this._addValidation(message);
+            validation.removeAttribute(this.entity);
         },
 
         _clearValidations: function () {
             logger.debug(this.id + "._clearValidations");
             dojoConstruct.destroy(this._alertDiv);
             this._alertDiv = null;
+            dojoClass.remove(this.radioButtonContainer, "has-error");
         },
 
         _showError: function (message) {
@@ -168,15 +170,19 @@ define([
                 return true;
             }
             this._alertDiv = dojoConstruct.create("div", {
-                "class": "alert alert-danger",
+                "class": "alert alert-danger mx-validation-message",
+                "role": "alert",
                 "innerHTML": message
             });
-            dojoConstruct.place(this._alertDiv, this.inputNodes);
+            dojoConstruct.place(this._alertDiv, this._radioContainer ? this._radioContainer : this.radioButtonContainer);
         },
 
         _addValidation: function (message) {
             logger.debug(this.id + "._addValidation");
-            this._showError(message);
+            if(message) {
+                this._showError(message);
+            }
+            dojoClass.add(this.radioButtonContainer, "has-error");
         },
 
         _resetSubscriptions: function () {

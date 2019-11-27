@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <widget id="RadioButtonList.widget.AttrRadioButtonList" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
-  <name>Attribute Radiobutton List</name>
+  <name>Attribute Radiobutton List (Deprecated)</name>
   <description>Creates a radiobutton list based on an enumeration or boolean attribute.</description>
 
   <icon>iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
@@ -19,9 +19,9 @@ YII=</icon>
 		<property key="entity" type="attribute" required="true">
 		  <caption>Target attribute</caption>
 		  <category>Data source</category>
-		  <description>The attribute which has to be rendered as a radiobutton list.</description> 
+		  <description>The attribute which has to be rendered as a radiobutton list.</description>
 		  <attributeTypes>
-			<attributeType name="Enum"/> 
+			<attributeType name="Enum"/>
 			<attributeType name="Boolean"/>
 		  </attributeTypes>
 		</property>
@@ -37,7 +37,7 @@ YII=</icon>
 		<property key="direction" type="enumeration" defaultValue="vertical">
 			<caption>Direction</caption>
 			<category>Display</category>
-			<description>This field determines the display direction of the radiobutton options.</description> 
+			<description>This field determines the display direction of the radiobutton options.</description>
 			<enumerationValues>
 				<enumerationValue key="horizontal">Horizontal</enumerationValue>
 				<enumerationValue key="vertical">Vertical</enumerationValue>
@@ -66,9 +66,9 @@ YII=</icon>
 		<property key="readonly" type="boolean" required="true" defaultValue="false">
 		  <caption>Read only</caption>
 		  <category>Display</category>
-		  <description>If true, the widget is not editable.</description> 
-		</property>		
-        <property key="labelWidth" type="integer" defaultValue="4">
+		  <description>If true, the widget is not editable.</description>
+		</property>
+        <property key="labelWidth" type="integer" defaultValue="3">
 			<caption>Label Width (weight)</caption>
 			<category>Display</category>
 			<description>The column size of the label control (only applied with horizontal orientation)</description>
@@ -82,7 +82,7 @@ YII=</icon>
                 <property key="allowDeselect" type="boolean" required="true" defaultValue="false">
                     <caption>Allow Deselect</caption>
                     <category>Events</category>
-                    <description>Deselecting by clicking on the selected item</description> 
+                    <description>Deselecting by clicking on the selected item</description>
                 </property>
 	</properties>
 </widget>
