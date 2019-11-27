@@ -49,6 +49,7 @@ define([
             _assocName: null,
             _locatedInListview: false,
             _setup: false,
+            _radioContainer: null,
 
             constructor: function () {
                 this._handles = [];
@@ -56,6 +57,8 @@ define([
 
             postCreate: function () {
                 logger.debug(this.id + ".postCreate");
+                this._assocName = (typeof this.entity !== "undefined" && this.entity !== "") ? this.entity.split("/")[0] : "";
+                this.entity = this._assocName;
             },
 
             update: function (obj, callback) {
@@ -75,8 +78,6 @@ define([
 
             _setupWidget: function (callback) {
                 logger.debug(this.id + "._setupWidget");
-                this._assocName = (typeof this.entity !== "undefined" && this.entity !== "") ? this.entity.split("/")[0] : "";
-                this.entity = this._assocName; //to catch data validation
 
                 if (this.readOnly || this.get("disabled") || this.readonly) {
                     //this.readOnly isn't available in client API, this.get("disabled") works correctly since 5.18.
@@ -104,11 +105,11 @@ define([
 
                         dojoClass.add(this.radioButtonLabel, comboLabelClass);
 
-                        var radioContainer = dojoConstruct.place(dojoConstruct.create("div", {
+                        this._radioContainer = dojoConstruct.place(dojoConstruct.create("div", {
                             "class": "col-sm-" + controlWidth
                         }), this.radioButtonContainer, "last");
 
-                        dojoConstruct.place(this.inputNodes, radioContainer, "only");
+                        dojoConstruct.place(this.inputNodes, this._radioContainer, "only");
                     } else {
                         dojoClass.add(this.radioButtonContainer, "no-columns");
                     }
@@ -150,7 +151,7 @@ define([
             _updateRendering: function (callback) {
                 logger.debug(this.id + "._updateRendering");
                 if (this._contextObj !== null) {
-                    dojoStyle.set(this.domNode, "display", "block");
+                    dojoStyle.set(this.domNode, "display", "");
                     this._createRadiobuttonNodes(callback);
                 } else {
                     if (!this._locatedInListview) {
@@ -167,21 +168,24 @@ define([
                 logger.debug(this.id + "._handleValidation");
                 this._clearValidations();
 
-                var validation = validations[0],
-                    message = validation.getReasonByAttribute(this.entity);
-
-                if (this._isReadOnly || this._contextObj.isReadonlyAttr(this.entity)) {
-                    validation.removeAttribute(this.entity);
-                } else if (message) {
-                    this._addValidation(message);
-                    validation.removeAttribute(this.entity);
+                var attribute = this.entity.split("/")[0];
+                if (this._isReadOnly || this._contextObj.isReadonlyAttr(attribute)) {
+                    return;
                 }
+
+                var validation = validations[0],
+                    message = validation.getReasonByAttribute(attribute);
+
+                this._addValidation(message);
+
+                validation.removeAttribute(attribute);
             },
 
             _clearValidations: function () {
                 logger.debug(this.id + "._clearValidations");
                 dojoConstruct.destroy(this._alertDiv);
                 this._alertDiv = null;
+                dojoClass.remove(this.radioButtonContainer, "has-error");
             },
 
             _showError: function (message) {
@@ -191,15 +195,19 @@ define([
                     return true;
                 }
                 this._alertDiv = dojoConstruct.create("div", {
-                    "class": "alert alert-danger",
+                    "class": "alert alert-danger mx-validation-message",
+                    "role": "alert",
                     "innerHTML": message
                 });
-                dojoConstruct.place(this._alertDiv, this.inputNodes);
+                dojoConstruct.place(this._alertDiv, this._radioContainer ? this._radioContainer : this.radioButtonContainer);
             },
 
             _addValidation: function (message) {
                 logger.debug(this.id + "._addValidation");
-                this._showError(message);
+                if (message) {
+                    this._showError(message);
+                }
+                dojoClass.add(this.radioButtonContainer, "has-error");
             },
 
             _resetSubscriptions: function () {
@@ -216,9 +224,10 @@ define([
                         })
                     });
 
+                    var attr = this.entity.split("/")[0];
                     this.subscribe({
                         guid: this._contextObj.getGuid(),
-                        attr: this.entity,
+                        attr: attr,
                         callback: lang.hitch(this, function (guid, attr, attrValue) {
                             this._setRadiobuttonOptions();
                         })
@@ -390,26 +399,7 @@ define([
                     this._clearValidations();
 
                     if (this.onchangeAction) {
-                        var action = {
-                            params: {
-                                applyto: "selection",
-                                actionname: this.onchangeAction,
-                                guids: [this._contextObj.getGuid()]
-                            },
-                            error: function (error) {
-                                console.error("RadioButtonList.widget.AttrRadioButtonList._addOnclickToRadiobuttonItem: XAS error executing microflow; " + error.description);
-                            }
-                        };
-
-                        if (!mx.version || !!mx.version && 7 > parseInt(mx.version.split(".")[ 0 ], 10)) {
-                            action.store = {
-                                caller: this.mxform,
-                            };
-                        } else {
-                            action.origin = this.mxform;
-                        }
-
-                        mx.data.action(action, this);
+                        this._execMF(this._contextObj, this.onchangeAction);
                     }
                 }));
             },
@@ -424,8 +414,10 @@ define([
                 if (obj) {
                     params.guids = [obj.getGuid()];
                 }
-                var action = {
+
+                mx.data.action({
                     params: params,
+                    caller: this.mxform,
                     callback: function (objs) {
                         if (typeof callback !== "undefined") {
                             callback(objs);
@@ -437,17 +429,7 @@ define([
                         }
                         console.error(error.description);
                     }
-                };
-
-                if (!mx.version || !!mx.version && 7 > parseInt(mx.version.split(".")[ 0 ], 10)) {
-                    action.store = {
-                        caller: this.mxform,
-                    };
-                } else {
-                    action.origin = this.mxform;
-                }
-
-                mx.data.action(action, this);
+                }, this);
             },
 
             _executeCallback: function (cb, from) {

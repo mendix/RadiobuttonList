@@ -97,7 +97,7 @@
 				<enumerationValue key="vertical">Vertical</enumerationValue>
 			</enumerationValues>
 		</property>
-		<property key="labelWidth" type="integer" defaultValue="4">
+		<property key="labelWidth" type="integer" defaultValue="3">
 			<caption>Label Width (weight)</caption>
 			<category>Display</category>
 			<description>The column size of the label control (only applied with horizontal orientation)</description>
@@ -116,7 +116,7 @@
                 <property key="allowDeselect" type="boolean" required="true" defaultValue="false">
                     <caption>Allow Deselect</caption>
                     <category>Events</category>
-                    <description>Deselecting by clicking on the selected item</description> 
-                </property>	
+                    <description>Deselecting by clicking on the selected item</description>
+                </property>
 	</properties>
 </widget>
