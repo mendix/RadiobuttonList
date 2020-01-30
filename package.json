@@ -1,6 +1,6 @@
 {
   "name": "RadioButtonList",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "",
   "license": "Apache Version 2.0",
   "author": "Mendix",
@@ -8,18 +8,18 @@
   "dependencies": {},
   "devDependencies": {
     "ansi-colors": "^4.1.1",
-    "del": "^2.2.2",
+    "del": "^5.1.0",
     "fancy-log": "^1.3.3",
     "gulp": "^4.0.2",
     "gulp-if": "^3.0.0",
     "gulp-intercept": "^0.1.0",
     "gulp-json-transform": "^0.4.7",
+    "gulp-jsvalidate": "^5.0.0",
     "gulp-newer": "^1.4.0",
     "gulp-plumber": "^1.2.1",
-    "gulp-zip": "^5.0.0",
-    "gulp-jsvalidate": "^4.0.0",
+    "gulp-zip": "^5.0.1",
     "widgetbuilder-gulp-helper": "https://github.com/JelteMX/widgetbuilder-gulp-helper/archive/1.0.2.tar.gz",
-    "yargs": "^14.0.0"
+    "yargs": "^15.1.0"
   },
   "engines": {
     "node": ">=5"
@@ -30,6 +30,7 @@
     "testProjectFileName": "Test.mpr"
   },
   "scripts": {
+    "dev": "node ./node_modules/gulp/bin/gulp",
     "build": "node ./node_modules/gulp/bin/gulp build",
     "version": "node ./node_modules/gulp/bin/gulp version",
     "icon": "node ./node_modules/gulp/bin/gulp icon",

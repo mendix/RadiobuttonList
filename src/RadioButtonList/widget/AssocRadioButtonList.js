@@ -39,6 +39,7 @@ define([
             onchangeAction: "",
             allowDeselect: false,
             formOrientation: null,
+            htmlContent: "escape",
 
             // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
             _handles: null,
@@ -274,13 +275,16 @@ define([
             _populateRadiobuttonOptions: function (objs, callback) {
                 logger.debug(this.id + "._populateRadiobuttonOptions");
                 var mxObj = null,
-                    i = 0;
+                    i = 0,
+                    value;
 
                 this._radioButtonOptions = {};
                 if (objs && objs.length) {
                     for (i = 0; i < objs.length; i++) {
                         mxObj = objs[i];
-                        this._radioButtonOptions[mxObj.getGuid()] = mxObj.get(this.RadioListItemAttribute);
+                        value = mxObj.get(this.RadioListItemAttribute);
+                        value = this.htmlContent === "escape" ? dom.escapeString(value) : value;
+                        this._radioButtonOptions[mxObj.getGuid()] = value;
                     }
                 }
 
