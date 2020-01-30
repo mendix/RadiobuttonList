@@ -2,9 +2,7 @@
 <widget id="RadioButtonList.widget.AssocRadioButtonList" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
 	<name>Association Radiobutton List</name>
 	<description>Creates a radiobutton list which will set an association value.</description>
-
 	<icon>iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuNUmK/OAAAALQSURBVDhPhZPLT1NBFMZvqQlbjTHyL/AnuJOdkQ079rxilMToSg0GH2B9pmhakD7kUV5FLLUVeqGttVD64NI2UioVsPS2hZZY+0BDKhE+Z6bF6EKd5ORkcuf7fuecOyPhyOLfeZuymR31TjrNSSQS7nRVFXfi5Knmc2fPaABIyBEWZB3Q83+sGae3SaXt37VarYhGoxBFES6XC326kQL51kwMKspBTdgqm5Y2IxOvQcXJZJJlnueRz+fh8/kwZjCDF0TYgwnM+uOY8sVgIftpXxwm9yaGbB/AyRW9jEzFra2tqKurg9lsRi6Xg1LVh/XYNqwLy7B7VvDWE4bZEYAQErG/DxjnN8B1KVWsbEqm4pqaGphMJhQKBXSr+2ENJAgtiknXBqYWYzC7YzDMf4LOGsFLx0dwo69MrGdaNiVTcbFYRCAQhJ608C+6zrIMjg6KDoz2TMumZCrWjU5gxvvxr/QJxxpUkwLYIGfnfC10YLRnWjYl+0Nr/6GHoNC7SwaZdFxaXX0RNGprr5G/BATCMdRffYYbXXoEV2MYtwjQGlzIZPdB6b0GAfIhJzgiajkS/55TnwtoaFNBOWJjhrn8DyyFtrCdKkJnCeHp6AKeDNhKFaSTG4+OxPX1HUwgbn1BY5sa7QoDPEERY9N+LK2kkM0elulzuK/hSwZbYqSCGjQ2PIZ60ssMoskMM7guH4fR9h4PtBY4hRgZMhhdpiX3pnOwZCBGQ9JhnZFtFHonM0ikCmi8qcFzvQO732hFe3AHkgiGM6R3QlfziMfCx5lBdD0oLedKuc6G4vcD2L0RnL/wEJdlQ3AuboJ3rRHRNOzkIjF6xwD29r4eO3ofLK9HBIl80EoMAJtnjdDn8MLghmE2hAGjgGFTAIntQ8gInZyVkkIZ+NfrWg27JVdkgzDa/bjbY8Q9zRQ6e9+gvduIW0ojbveYcIfEpY5+1i4xqPwJSNC6dg/YpdEAAAAASUVORK5CYII=</icon>
-
 	<properties>
 		<property key="dataSourceType" type="enumeration" defaultValue="xpath">
 			<caption>Data source type</caption>
@@ -73,6 +71,15 @@
 			<attributeTypes>
 				<attributeType name="String" />
 			</attributeTypes>
+		</property>
+		<property key="htmlContent" type="enumeration" defaultValue="escape">
+			<caption>Attribute Content</caption>
+			<category>Data source</category>
+			<description>Label attribute can contain HTML JavaScript, escape to prevent security issue.</description>
+			<enumerationValues>
+				<enumerationValue key="escape">Escape HTML</enumerationValue>
+				<enumerationValue key="plain">Unsecure HTML</enumerationValue>
+			</enumerationValues>
 		</property>
 		<property key="entity" type="entity" required="true" isPath="yes" pathType="reference" allowNonPersistableEntities="true">
 			<caption>Association</caption>
