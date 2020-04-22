@@ -4,6 +4,7 @@ define([
         "dojo/_base/declare",
         "mxui/widget/_WidgetBase",
         "dijit/_TemplatedMixin",
+        "dijit/focus",
         "mxui/dom",
         "dojo/dom-class",
         "dojo/dom-style",
@@ -14,7 +15,7 @@ define([
         "dojo/html",
         "dojo/text!RadioButtonList/widget/template/RadioButtonList.html"
     ],
-    function (declare, _WidgetBase, _TemplatedMixin, dom, dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
+    function (declare, _WidgetBase, _TemplatedMixin, focusUtil, dom, dojoClass, dojoStyle, dojoConstruct, dojoAttr, dojoArray, lang, dojoHtml, widgetTemplate) {
         "use strict";
 
         // Declare widget.
@@ -331,6 +332,9 @@ define([
 
                             if (!this.inputNodes.children[i]) {
                                 dojoConstruct.place(enclosingDivElement, this.inputNodes, "last");
+                                if(dojoAttr.get(radioButtonNode, "defaultChecked")) {
+                                    focusUtil.focus(radioButtonNode);
+                                }
                             }
                         }
 
