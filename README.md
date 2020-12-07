@@ -86,3 +86,5 @@ Association: Employee_CompanyDeparment/CompanyDepartment.
 
 Onchange has no effect on the form. Workaround: add a microflow to the onchange property of the widget.This microflow must contain a change activity. The change activity must have 'refresh in a client' enabled.
 
+## Raising problems/issues
+-   We encourage everyone to open a Support ticket on [Mendix Support](https://support.mendix.com) in case of problems with widgets or scaffolding tools (Pluggable Widgets Generator or Pluggable Widgets Tools)
