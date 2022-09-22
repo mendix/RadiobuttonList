@@ -225,7 +225,11 @@ define([
             if (this.entity !== "" && this._contextObj) {
                 //get enumeration for current attribute
                 if (this._contextObj.getAttributeType(this.entity) === "Enum") {
-                    this._radioButtonOptions = this._contextObj.getEnumKVPairs(this.entity);
+                    var enumMap = this._contextObj.getEnumMap(this.entity);
+                    this._radioButtonOptions = {};
+                    for(var i = 0; i < enumMap.length; i++) {
+                        this._radioButtonOptions[enumMap[i].key] = enumMap[i].caption;
+                    }
                 } else if (this._contextObj.getAttributeType(this.entity) === "Boolean") {
                     this._radioButtonOptions = {};
                     this._radioButtonOptions["true"] = this.captiontrue;
