@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <widget id="RadioButtonList.widget.AttrRadioButtonList" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
-  <name>Attribute Radiobutton List (Deprecated)</name>
+  <name>Attribute Radiobutton List</name>
   <description>Creates a radiobutton list based on an enumeration or boolean attribute.</description>
 
   <icon>iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACx

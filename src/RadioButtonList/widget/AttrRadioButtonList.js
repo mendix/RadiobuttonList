@@ -1,5 +1,5 @@
 /*jslint browser: true, devel:true, nomen:true, unparam:true, regexp: true, plusplus:true*/
-/*global require, define, logger, mx, mendix*/
+/*global require, define, mx.logger, mx, mendix*/
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
@@ -48,11 +48,11 @@ define([
         },
 
         postCreate: function () {
-            logger.debug(this.id + ".postCreate");
+            mx.logger.debug(this.id + ".postCreate");
         },
 
         update: function (obj, callback) {
-            logger.debug(this.id + ".update");
+            mx.logger.debug(this.id + ".update");
             this._contextObj = obj;
             this._resetSubscriptions();
             this._setRadiobuttonOptions();
@@ -67,7 +67,7 @@ define([
         },
 
         _setupWidget: function (callback) {
-            logger.debug(this.id + "._setupWidget");
+            mx.logger.debug(this.id + "._setupWidget");
 
             if (this.readOnly || this.get("disabled") || this.readonly) {
                 //this.readOnly isn"t available in client API, this.get("disabled") works correctly since 5.18.
@@ -128,7 +128,7 @@ define([
         },
 
         _updateRendering: function (callback) {
-            logger.debug(this.id + "._updateRendering");
+            mx.logger.debug(this.id + "._updateRendering");
 
             if (this._contextObj !== null) {
                 dojoStyle.set(this.domNode, "display", "");
@@ -143,7 +143,7 @@ define([
         },
 
         _handleValidation: function (validations) {
-            logger.debug(this.id + "._handleValidation");
+            mx.logger.debug(this.id + "._handleValidation");
             this._clearValidations();
 
             var validation = validations[0],
@@ -158,14 +158,14 @@ define([
         },
 
         _clearValidations: function () {
-            logger.debug(this.id + "._clearValidations");
+            mx.logger.debug(this.id + "._clearValidations");
             dojoConstruct.destroy(this._alertDiv);
             this._alertDiv = null;
             dojoClass.remove(this.radioButtonContainer, "has-error");
         },
 
         _showError: function (message) {
-            logger.debug(this.id + "._showError");
+            mx.logger.debug(this.id + "._showError");
             if (this._alertDiv !== null) {
                 dojoHtml.set(this._alertDiv, message);
                 return true;
@@ -179,7 +179,7 @@ define([
         },
 
         _addValidation: function (message) {
-            logger.debug(this.id + "._addValidation");
+            mx.logger.debug(this.id + "._addValidation");
             if(message) {
                 this._showError(message);
             }
@@ -187,7 +187,7 @@ define([
         },
 
         _resetSubscriptions: function () {
-            logger.debug(this.id + "._resetSubscriptions");
+            mx.logger.debug(this.id + "._resetSubscriptions");
             var validationHandle = null,
                 objectHandle = null,
                 attrHandle = null;
@@ -221,7 +221,7 @@ define([
         },
 
         _setRadiobuttonOptions: function () {
-            logger.debug(this.id + "._setRadiobuttonOptions");
+            mx.logger.debug(this.id + "._setRadiobuttonOptions");
             if (this.entity !== "" && this._contextObj) {
                 //get enumeration for current attribute
                 if (this._contextObj.getAttributeType(this.entity) === "Enum") {
@@ -239,7 +239,7 @@ define([
         },
 
         _createRadiobuttonNodes: function (callback) {
-            logger.debug(this.id + "._createRadiobuttonNode");
+            mx.logger.debug(this.id + "._createRadiobuttonNode");
             var labelNode = null,
                 radioButtonNode = null,
                 i = 0,
@@ -298,7 +298,7 @@ define([
         },
 
         _createLabelNode: function (key, value, index) {
-            logger.debug(this.id + "._createLabelNode");
+            mx.logger.debug(this.id + "._createLabelNode");
             var labelNode = dojoConstruct.create("label", {
                 "for": this.entity + "_" + this.id + "_" + index,
                 "innerHTML": value
@@ -308,7 +308,7 @@ define([
         },
 
         _createRadiobuttonNode: function (key, value, index) {
-            logger.debug(this.id + "._createRadiobuttonNode");
+            mx.logger.debug(this.id + "._createRadiobuttonNode");
             var radiobuttonNode = null;
 
             radiobuttonNode = dojoConstruct.create("input", {
@@ -335,7 +335,7 @@ define([
         },
 
         _addOnclickToRadiobuttonItem: function (radiobuttonNode, rbvalue) {
-            logger.debug(this.id + "._addOnclickToRadiobuttonItem");
+            mx.logger.debug(this.id + "._addOnclickToRadiobuttonItem");
             this.connect(radiobuttonNode, "onclick", lang.hitch(this, function () {
 
                 if (this._isReadOnly ||
@@ -381,7 +381,7 @@ define([
         },
 
         _executeCallback: function (cb, from) {
-            logger.debug(this.id + "._executeCallback " + (typeof cb) + (from ? " from " + from : ""));
+            mx.logger.debug(this.id + "._executeCallback " + (typeof cb) + (from ? " from " + from : ""));
             if (cb && typeof cb === "function") {
                 cb();
             }
