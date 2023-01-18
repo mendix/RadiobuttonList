@@ -1,5 +1,5 @@
 /*jslint browser: true, devel:true, nomen:true, unparam:true, regexp: true, plusplus:true*/
-/*global require, define, logger, mx, mendix*/
+/*global require, define, console, mx, mendix*/
 define([
         "dojo/_base/declare",
         "mxui/widget/_WidgetBase",
@@ -58,13 +58,13 @@ define([
             },
 
             postCreate: function () {
-                logger.debug(this.id + ".postCreate");
+                console.debug(this.id + ".postCreate");
                 this._assocName = (typeof this.entity !== "undefined" && this.entity !== "") ? this.entity.split("/")[0] : "";
                 this.entity = this._assocName;
             },
 
             update: function (obj, callback) {
-                logger.debug(this.id + ".update");
+                console.debug(this.id + ".update");
 
                 this._contextObj = obj;
                 this._resetSubscriptions();
@@ -79,7 +79,7 @@ define([
             },
 
             _setupWidget: function (callback) {
-                logger.debug(this.id + "._setupWidget");
+                console.debug(this.id + "._setupWidget");
 
                 if (this.readOnly || this.get("disabled") || this.readonly) {
                     //this.readOnly isn't available in client API, this.get("disabled") works correctly since 5.18.
@@ -134,7 +134,7 @@ define([
             },
 
             _setRadiobuttonOptions: function (callback) {
-                logger.debug(this.id + "._setRadiobuttonOptions");
+                console.debug(this.id + "._setRadiobuttonOptions");
 
                 if (this._contextObj) {
                     if (this.dataSourceType === "xpath") {
@@ -151,7 +151,7 @@ define([
             },
 
             _updateRendering: function (callback) {
-                logger.debug(this.id + "._updateRendering");
+                console.debug(this.id + "._updateRendering");
                 if (this._contextObj !== null) {
                     dojoStyle.set(this.domNode, "display", "");
                     this._createRadiobuttonNodes(callback);
@@ -167,7 +167,7 @@ define([
             },
 
             _handleValidation: function (validations) {
-                logger.debug(this.id + "._handleValidation");
+                console.debug(this.id + "._handleValidation");
                 this._clearValidations();
 
                 if (this._isReadOnly || this._contextObj.isReadonlyAttr(this.entity)) {
@@ -183,14 +183,14 @@ define([
             },
 
             _clearValidations: function () {
-                logger.debug(this.id + "._clearValidations");
+                console.debug(this.id + "._clearValidations");
                 dojoConstruct.destroy(this._alertDiv);
                 this._alertDiv = null;
                 dojoClass.remove(this.radioButtonContainer, "has-error");
             },
 
             _showError: function (message) {
-                logger.debug(this.id + "._showError");
+                console.debug(this.id + "._showError");
                 if (this._alertDiv !== null) {
                     dojoHtml.set(this._alertDiv, message);
                     return true;
@@ -204,7 +204,7 @@ define([
             },
 
             _addValidation: function (message) {
-                logger.debug(this.id + "._addValidation");
+                console.debug(this.id + "._addValidation");
                 if (message) {
                     this._showError(message);
                 }
@@ -212,7 +212,7 @@ define([
             },
 
             _resetSubscriptions: function () {
-                logger.debug(this.id + "._resetSubscriptions");
+                console.debug(this.id + "._resetSubscriptions");
                 // Release handles on previous object, if any.
                 this.unsubscribeAll();
 
@@ -242,7 +242,7 @@ define([
             },
 
             _getDataFromXPath: function (callback) {
-                logger.debug(this.id + "._getDataFromXPath");
+                console.debug(this.id + "._getDataFromXPath");
                 if (this._contextObj) {
                     mx.data.get({
                         xpath: "//" + this.RadioListObject + this.Constraint.replace(/\[%CurrentObject%\]/g, this._contextObj.getGuid()),
@@ -267,14 +267,14 @@ define([
             },
 
             _getDataFromDatasource: function (callback) {
-                logger.debug(this.id + "._getDataFromDatasource");
+                console.debug(this.id + "._getDataFromDatasource");
                 this._execMF(this._contextObj, this.datasourceMf, lang.hitch(this, function (objs) {
                     this._populateRadiobuttonOptions(objs, callback);
                 }));
             },
 
             _populateRadiobuttonOptions: function (objs, callback) {
-                logger.debug(this.id + "._populateRadiobuttonOptions");
+                console.debug(this.id + "._populateRadiobuttonOptions");
                 var mxObj = null,
                     i = 0,
                     value;
@@ -293,7 +293,7 @@ define([
             },
 
             _createRadiobuttonNodes: function (callback) {
-                logger.debug(this.id + "._createRadiobuttonNodes");
+                console.debug(this.id + "._createRadiobuttonNodes");
 
                 var mxObj = null,
                     i = 0,
@@ -352,7 +352,7 @@ define([
             },
 
             _createLabelNode: function (key, value, index) {
-                logger.debug(this.id + "._createLabelNode");
+                console.debug(this.id + "._createLabelNode");
                 var labelNode = dojoConstruct.create("label", {
                     "for": this.entity + "_" + this.id + "_" + index,
                     "innerHTML": value
@@ -362,7 +362,7 @@ define([
             },
 
             _createRadiobuttonNode: function (key, value, index) {
-                logger.debug(this.id + "._createRadiobuttonNode");
+                console.debug(this.id + "._createRadiobuttonNode");
                 var radiobuttonNode = null;
 
                 radiobuttonNode = dojoConstruct.create("input", {
@@ -387,7 +387,7 @@ define([
             },
 
             _addOnclickToRadiobuttonItem: function (labelNode, rbvalue) {
-                logger.debug(this.id + "._addOnclickToRadiobuttonItem");
+                console.debug(this.id + "._addOnclickToRadiobuttonItem");
 
                 this.connect(labelNode, "onclick", lang.hitch(this, function () {
 
@@ -411,7 +411,7 @@ define([
             },
 
             _execMF: function (obj, mf, callback) {
-                logger.debug(this.id + "._execMF");
+                console.debug(this.id + "._execMF");
                 var params = {
                     applyto: "selection",
                     actionname: mf,
@@ -439,7 +439,7 @@ define([
             },
 
             _executeCallback: function (cb, from) {
-                logger.debug(this.id + "._executeCallback " + (typeof cb) + (from ? " from " + from : ""));
+                console.debug(this.id + "._executeCallback " + (typeof cb) + (from ? " from " + from : ""));
                 if (cb && typeof cb === "function") {
                     cb();
                 }
