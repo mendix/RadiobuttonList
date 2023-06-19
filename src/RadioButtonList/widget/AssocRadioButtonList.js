@@ -207,8 +207,8 @@ define([
                 console.debug(this.id + "._addValidation");
                 if (message) {
                     this._showError(message);
-                }
-                dojoClass.add(this.radioButtonContainer, "has-error");
+                    dojoClass.add(this.radioButtonContainer, "has-error");
+                }                
             },
 
             _resetSubscriptions: function () {
